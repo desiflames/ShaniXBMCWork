@@ -1644,13 +1644,18 @@ def revist_dag(page_data):
     return final_url
     
 def get_ferrari_url(page_data,progress):
-#    print 'get_dag_url2',page_data
+    print 'get_dag_url2',page_data
     page_data2=getUrl(page_data);
-#    print 'page_data2',page_data2
+    print 'page_data2',page_data2
     patt='(http.*)'
+    patt2='adsid=(.*?)&'
     if 'adsid=' in page_data2:
         page_data2=re.compile(patt).findall(page_data2)[0]
         page_data=page_data2;
+    elif 'ttl=' in page_data2:
+        page_data2=re.compile(patt).findall(page_data2)[0]
+        page_data=page_data2;        
+        patt2='ttl=(.*?)&'
     else:
         return page_data
 
@@ -1660,7 +1665,7 @@ def get_ferrari_url(page_data,progress):
     i=0
     addval=0
     opener = urllib2.build_opener(NoRedirection)
-    patt2='adsid=(.*?)&'
+
     adsid=re.compile(patt2).findall(page_data)[0]
     print 'adsid',adsid
     adsidnew=int(adsid)-20000000
@@ -1714,14 +1719,28 @@ def get_dag_url(page_data):
     return final_url
 
 def getPV2Url():
-    req = urllib2.Request( base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2FwcF9wYW5lbC9vdXRwdXQucGhwL3BsYXlsaXN0P3R5cGU9eG1sJmRldmljZVNuPXBha2luZGlhbmhkMw=='))
+    import base64
+    import time
+    TIME = time.time()
+    second= str(TIME).split('.')[0]
+    first =int(second)+int(base64.b64decode('NjkyOTY5Mjk='))
+    token=base64.b64encode(base64.b64decode('JXNAMm5kMkAlcw==') % (str(first),second))
+    req = urllib2.Request( base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2FwcF9wYW5lbG5ldy9vdXRwdXQucGhwL3BsYXlsaXN0P3R5cGU9eG1sJmRldmljZVNuPXBha2luZGlhNCZ0b2tlbj0lcw==')  %token)   
     req.add_header('Authorization', base64.b64decode('QmFzaWMgWVdSdGFXNDZRV3hzWVdneFFBPT0=')) 
     response = urllib2.urlopen(req)
     link=response.read()
     return link
+    
 def getPV2Auth():
-    req = urllib2.Request( base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2tleXMvYXBwc190b2tlbi5waHA='))
-    req.add_header('Authorization', base64.b64decode('QmFzaWMgZG05NGMyOW1kR1Y0Y0dWeWREcEFkbTk0YzI5bWRHVjRjR1Z5ZEVBPQ==')) 
+    import base64
+    import time
+    TIME = time.time()
+    second= str(TIME).split('.')[0]
+    first =int(second)+int(base64.b64decode('NjkyOTY5Mjk='))
+    token=  base64.b64encode( base64.b64decode('JXNAMm5kMkAlcw==') % (str(first),second))
+ 
+    req = urllib2.Request( base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2tleXMvYWN0aXZhdGUucGhwP3Rva2VuPQ==')+token)
+    req.add_header('Authorization', "Basic %s"%base64.b64decode('Wkdsc1pHbHNaR2xzT2xCQWEybHpkRUJ1')) 
     response = urllib2.urlopen(req)
     link=response.read()
     return link

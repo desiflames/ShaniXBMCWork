@@ -1,3 +1,6 @@
+Version 1.9.2
+removed unused imports
+
 Version 1.9.1
 support for x-addr and RijndaelManaged encryption
 
