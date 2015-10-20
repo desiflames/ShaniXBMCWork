@@ -1644,21 +1644,35 @@ def revist_dag(page_data):
     return final_url
     
 def get_ferrari_url(page_data,progress):
-    print 'get_dag_url2',page_data
+
+
+#    print 'get_dag_url2',page_data
+    
     page_data2=getUrl(page_data);
-    print 'page_data2',page_data2
+#    print 'page_data2',page_data2
     patt='(http.*)'
-    patt2='adsid=(.*?)&'
+    patt2='adsid=(.*?)&'    
+    
+    if 'ams.jadootv.info' in page_data2:
+        page_data2=re.compile(patt).findall(page_data2)[0]
+        page_data2=getUrl(page_data2);
+#        page_data2=re.compile(patt).findall(page_data2)[0]
+        headers=[('User-Agent','Ipad')]
+        page_data2=getUrl(page_data,headers=headers);
+#        print 'iam here',page_data2
+        
+
     if 'adsid=' in page_data2:
         page_data2=re.compile(patt).findall(page_data2)[0]
         page_data=page_data2;
     elif 'ttl=' in page_data2:
         page_data2=re.compile(patt).findall(page_data2)[0]
+        return page_data2
         page_data=page_data2;        
         patt2='ttl=(.*?)&'
     else:
         return page_data
-
+        
     progress.update( 30, "", "Found Ads", "" )
     import uuid
     playback=str(uuid.uuid1()).upper()   
@@ -1667,7 +1681,7 @@ def get_ferrari_url(page_data,progress):
     opener = urllib2.build_opener(NoRedirection)
 
     adsid=re.compile(patt2).findall(page_data)[0]
-    print 'adsid',adsid
+#    print 'adsid',adsid
     adsidnew=int(adsid)-20000000
     page_data=page_data.replace(adsid,str(adsidnew))
     from datetime import datetime
