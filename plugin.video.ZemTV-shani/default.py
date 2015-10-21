@@ -1647,7 +1647,8 @@ def get_ferrari_url(page_data,progress):
 
 
 #    print 'get_dag_url2',page_data
-    
+    if not page_data.startswith('http'):
+        return page_data;
     page_data2=getUrl(page_data);
 #    print 'page_data2',page_data2
     patt='(http.*)'
@@ -1671,7 +1672,7 @@ def get_ferrari_url(page_data,progress):
         page_data=page_data2;        
         patt2='ttl=(.*?)&'
     else:
-        return page_data
+        return page_data+'|User-Agent=iPad'
         
     progress.update( 30, "", "Found Ads", "" )
     import uuid
@@ -1716,7 +1717,7 @@ def get_ferrari_url(page_data,progress):
     #xbmc.sleep(timetowait)
     progress.update( 90, "", "Almost completed" , "" )
     print 'work done here '+page_data
-    return page_data+'|&X-Playback-Session-Id='+playback
+    return page_data+'|User-Agent=iPad&X-Playback-Session-Id='+playback
     
 def get_dag_url(page_data):
     print 'get_dag_url',page_data
