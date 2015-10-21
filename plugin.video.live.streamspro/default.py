@@ -2293,7 +2293,7 @@ def addLink(url,name,iconimage,fanart,description,genre,date,showcontext,playlis
         
         if (not play_list) and not any(x in url for x in g_ignoreSetResolved) and not '$PLAYERPROXY$=' in url:#  (not url.startswith('plugin://plugin.video.f4mTester')):
             if regexs:
-                print urllib.unquote_plus(regexs)
+                #print urllib.unquote_plus(regexs)
                 if '$pyFunction:playmedia(' not in urllib.unquote_plus(regexs) and 'notplayable' not in urllib.unquote_plus(regexs) and 'listlink' not in  urllib.unquote_plus(regexs) :
                     #print 'setting isplayable',url, urllib.unquote_plus(regexs),url
                     liz.setProperty('IsPlayable', 'true')
