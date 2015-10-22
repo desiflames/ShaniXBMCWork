@@ -44,6 +44,8 @@ willowCommonUrl=''# this is where the common url will stay
 
 WTVCOOKIEFILE='WTVCookieFile.lwp'
 WTVCOOKIEFILE=os.path.join(profile_path, WTVCOOKIEFILE)
+ZEMCOOKIEFILE='ZemCookieFile.lwp'
+ZEMCOOKIEFILE=os.path.join(profile_path, ZEMCOOKIEFILE)
 
  
 mainurl=base64.b64decode('aHR0cDovL3d3dy56ZW10di5jb20v')
@@ -188,7 +190,8 @@ def DisplayChannelNames(url):
 
 
 def Addtypes():
-	addDir('Shows' ,'Shows' ,2,'')
+	addDir('Latest Shows' ,'Shows' ,2,'')
+	addDir('All Programs and Talk Shows' ,'ProgTalkShows' ,2,'')
 	addDir('Pakistani Live Channels' ,'PakLive' ,2,'')
 	addDir('Indian Live Channels' ,'IndianLive' ,2,'')
 	addDir('Punjabi Live Channels' ,'PunjabiLive' ,2,'')
@@ -515,7 +518,7 @@ def GetSSSEvents(url):
                 ptitle=channel["NowPlaying"]["EventNowPlaying"]
                 cname=channel["NowPlaying"]["Channel"]
                 link=channel["NowPlaying"]["Link"]
-                print ptitle, cname,link
+#                print ptitle, cname,link
                 if not link is None:
                     if ptitle is None: ptitle=''
         #            addDir(cname ,'a',27,'', False, True,isItFolder=False)
@@ -567,7 +570,7 @@ def AddCricHD(url):
 #        print channels
 #        channels=[('Sky Sports 1','1'),('Sky Sports 2','2'),('Sky Sports 3','3'),('Sky Sports 4','4'),('Sky Sports 5','5'),('Sky Sports F1','6') ,('BT Sport 1','7'),('BT Sports 2','8') ,('Willow Cricket','24') ,('Ptv Sports','15')   ]
         for channel in channels:
-            print channel
+#            print channel
             cname=channel[2]
             cid=channel[0]
             cimg=channel[1]
@@ -576,7 +579,7 @@ def AddCricHD(url):
             if not cimg.startswith('http'):cimg=url+cimg
 
 #            addDir(cname ,'a',27,'', False, True,isItFolder=False)
-            print 'adding'
+#            print 'adding'
             addDir(cname ,cid,27,cimg, False, True,isItFolder=False)
 
         pat='<b><a class="menuitem" href="(.*?)"><font size="4">(.*?)<'
@@ -584,7 +587,7 @@ def AddCricHD(url):
 #        print channels
 #        channels=[('Sky Sports 1','1'),('Sky Sports 2','2'),('Sky Sports 3','3'),('Sky Sports 4','4'),('Sky Sports 5','5'),('Sky Sports F1','6') ,('BT Sport 1','7'),('BT Sports 2','8') ,('Willow Cricket','24') ,('Ptv Sports','15')   ]
         for channel in channels:
-            print channel
+#            print channel
             cname=channel[1]
             cid=channel[0]
             cimg=""#;channel[2]
@@ -593,7 +596,7 @@ def AddCricHD(url):
             if not cimg.startswith('http'):cimg=url+cimg
 
 #            addDir(cname ,'a',27,'', False, True,isItFolder=False)
-            print 'adding'
+#            print 'adding'
             addDir(cname ,cid,27,cimg, False, True,isItFolder=False)
             
 
@@ -614,12 +617,12 @@ def AddPopeLive(url):
 #        print channels
         channels=[('Sky Sports 1','1'),('Sky Sports 2','2'),('Sky Sports 3','3'),('Sky Sports 4','4'),('Sky Sports 5','5'),('Sky Sports F1','6') ,('BT Sport 1','7'),('BT Sports 2','8') ,('Willow Cricket','24') ,('Ptv Sports','15')   ]
         for channel in channels:
-            print channel
+#            print channel
             cname=channel[0]
             cid=channel[1]
 
 #            addDir(cname ,'a',27,'', False, True,isItFolder=False)
-            print 'adding'
+#            print 'adding'
             addDir(cname ,cid,27,'', False, True,isItFolder=False)
     except: traceback.print_exc(file=sys.stdout)
     
@@ -638,7 +641,7 @@ def AddWillSportsOldSeries(url):
         else:
             res=response.read()
 
-        print repr(res[:100])
+#        print repr(res[:100])
         res=res.split('Handle_WLSeriesDetailsObj(')[1][:-2]
         serieses = json.loads(res)
   
@@ -668,7 +671,7 @@ def AddWillSportsOldSeriesMatches(url):
         else:
             res=response.read()
 
-        print repr(res[:100])
+#        print repr(res[:100])
         res=res.split('Handle_WLSeriesDetailsObj(')[1][:-2]
         serieses = json.loads(res)
   
@@ -689,6 +692,19 @@ def AddWillSportsOldSeriesMatches(url):
 def useMyOwnUserNamePwd():
     willow_username=selfAddon.getSetting( "WillowUserName" ) 
     return not willow_username==""
+
+def getZemCookieJar(updatedUName=False):
+    cookieJar=None
+    try:
+        cookieJar = cookielib.LWPCookieJar()
+        if not updatedUName:
+            cookieJar.load(ZEMCOOKIEFILE,ignore_discard=True)
+    except: 
+        cookieJar=None
+
+    if not cookieJar:
+        cookieJar = cookielib.LWPCookieJar()
+    return cookieJar
     
 def getWTVCookieJar(updatedUName=False):
     cookieJar=None
@@ -853,7 +869,7 @@ def getwillow247(matchid,CJ):
         response = opener.open(req,timeout=20)
         link=response.read()
         response.close()
-        print link
+#        print link
         progress.update( 30, "", "Got the Link, Now playing with Using proxy" )
         final_url=re.findall(pat,link)[0]
         playmediawithproxy(final_url,'24x7 willow','',proxyserver,proxyport,progress)
@@ -909,11 +925,11 @@ def getMatchUrl(matchid):
                 if 'CXMUserId' in s:
                     #print 'ssssssssssssss',s
                     userid=s.split('value=\'')[1].split('%')[0]
-            print 'userid',userid
+#            print 'userid',userid
             calltype='Live'
             if mode==21:
                 WLlive=True
-                print 'matchid',matchid
+#                print 'matchid',matchid
                 matchid,source_sectionid=matchid.split(':')
                 st='LiveMatch'
                 url=base64.b64decode('aHR0cDovL3d3dy53aWxsb3cudHYvRXZlbnRNZ210LyVzVVJMLmFzcD9taWQ9JXM=')%(st,matchid)
@@ -977,7 +993,7 @@ def PlaySSSEvent(url):
         if (not maxbitrate_settings=='') and 'Max' not in maxbitrate_settings:
             maxbitrate=maxbitrate_settings
         finalUrl='plugin://plugin.video.f4mTester/?url=%s&maxbitrate=%s&name=%s&swf=%s'%(urllib.quote_plus(finalUrl),maxbitrate,str(name),base64.b64decode("aHR0cDovL2NvcmUuZHN0di5jb20vdmlkZW8vZmxhc2gvUGxheWVyRFN0dlNTLnN3Zj92PTEuMTk="))
-    print 'finalUrl',finalUrl
+#    print 'finalUrl',finalUrl
 #    playlist = xbmc.PlayList(1)
 #    playlist.clear()
 #    listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
@@ -1183,7 +1199,7 @@ def AddWillowCric(url):
         for game in past_games:
             match_name=game["MatchName"]
             match_id=game["MatchId"]
-            print 'match_id',match_id
+#            print 'match_id',match_id
             MatchStartDate=game["MatchStartDate"]
             entry_name=MatchStartDate+' - '+match_name
 #            addDir(entry_name ,match_id,23,'', False, True,isItFolder=True)		#name,url,mode,icon
@@ -1229,7 +1245,7 @@ def AddSmartCric(url):
 
     response = urllib2.urlopen(req)
     link=response.read()
-    print link
+#    print link
     response.close()
     patt='performGet\(\'(.+)\''
     match_url =re.findall(patt,link)[0]
@@ -1256,11 +1272,11 @@ def AddSmartCric(url):
         
         for source in sources["channelsList"]:
             if 1==1:#ctype=='liveWMV' or ctype=='manual':
-                print source
+#                print source
                 curl=''
                 cname=source["caption"]
                 fms=source["fmsUrl"]
-                print curl
+#                print curl
                 #if ctype<>'': cname+= '[' + ctype+']'
                 addDir(cname ,curl ,-1,'', False, True,isItFolder=False)		#name,url,mode,icon
                 if 'streamsList' in source and source["streamsList"] and len(source["streamsList"])>0:
@@ -1312,7 +1328,7 @@ def PlayWatchCric(url):
     response = urllib2.urlopen(req)
     link=response.read()
     response.close()
-    print 'match_url',match_url,link
+#    print 'match_url',match_url,link
         
 
     ccommand="";#'%s;TRUE;TRUE;'
@@ -1374,11 +1390,11 @@ def PlayWatchCric(url):
 
         patt="width=([0-9]*).*?height=([0-9]*)"
         matc =re.findall(patt,link)
-        print 'matc',matc
+#        print 'matc',matc
         width, height=matc[0]
     except: pass
 
-    print 'width,height',width,height
+#    print 'width,height',width,height
     #print link
     match_e =re.findall(pat_e,link)[0]
     
@@ -1414,9 +1430,9 @@ def PlayWatchCric(url):
 
     if not ccommand=="":
         ccommand="ccommand="+(ccommand%c)
-    print 'ccommand',ccommand
+#    print 'ccommand',ccommand
     url='rtmp://%s/%s playpath=%s?id=%s pageUrl=%s swfUrl=%s Conn=S:OK %s flashVer=WIN\2019,0,0,185 timeout=20'%(ip,app,sid,matchid,match_urljs,swfUrl,ccommand)
-    print url
+#    print url
     playlist = xbmc.PlayList(1)
     playlist.clear()
     listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
@@ -1426,7 +1442,7 @@ def PlayWatchCric(url):
 
 def PlayGen(url):
     url = base64.b64decode(url)
-    print 'gen is '+url
+#    print 'gen is '+url
 
     playlist = xbmc.PlayList(1)
     playlist.clear()
@@ -1444,20 +1460,22 @@ def PlaySmartCric(url):
     xbmcPlayer = xbmc.Player(xbmc.PLAYER_CORE_AUTO)
     xbmcPlayer.play(playlist) 
         
-def AddEnteries(type):
+def AddEnteries(name, type=None):
 #	print "addenT"
     if type=='Shows':
         AddShows(mainurl)
-    elif type=='Next Page':
+    elif type=='ProgTalkShows':
+        AddProgramsAndShows(mainurl)
+    elif name=='Next Page' or mode==43:
         AddShows(url)
     else:
         #addDir(Colored('ZemTv Channels','ZM',True) ,'ZEMTV' ,10,'', False, True,isItFolder=False)		#name,url,mode,icon
         #AddChannels();#AddChannels()
-        isPakistani=(type=='Pakistani Live Channels')
+        isPakistani=(name=='Pakistani Live Channels')
         
         
         isYellowOff=selfAddon.getSetting( "isYellowOff" ) 
-        print 'isPakistani',isPakistani,isYellowOff
+#        print 'isPakistani',isPakistani,isYellowOff
         if isPakistani and not isYellowOff=="true":        
             addDir(Colored('EboundServices Channels','EB',True) ,'ZEMTV' ,10,'', False, True,isItFolder=False)		#name,url,mode,icon
             try:
@@ -1465,7 +1483,7 @@ def AddEnteries(type):
             except: pass
         addDir(Colored('Other sources','ZM',True) ,'ZEMTV' ,10,'', False, True,isItFolder=False)
         try:
-            ctype=1 if type=='Pakistani Live Channels' else ( 2 if type=='Indian Live Channels' else 3)
+            ctype=1 if name=='Pakistani Live Channels' else ( 2 if name=='Indian Live Channels' else 3)
             AddChannelsFromOthers(ctype)
         except:
             print 'somethingwrong'
@@ -1585,7 +1603,7 @@ def AddChannelsFromOthers(cctype):
         pg='indian'
     if pg:
         try:
-            print 'xxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+#            print 'xxxxxxxxxxxxxxxxxxxxxxxxxxxx'
             xmldata=getPV2Url()
             sources=etree.fromstring(xmldata)
             ret=[]
@@ -1606,7 +1624,7 @@ def AddChannelsFromOthers(cctype):
     match=sorted(match,key=lambda s: s[0].lower()   )
     for cname,ctype,curl,imgurl in match:
         if 1==1:#ctype=='liveWMV' or ctype=='manual':
-            print curl
+#            print curl
             #if ctype<>'': cname+= '[' + ctype+']'
             
             addDir(Colored(cname.capitalize(),'ZM') ,base64.b64encode(curl) ,11 if not ctype=='manual2' else 37 ,imgurl, False, True,isItFolder=False)		#name,url,mode,icon
@@ -1720,7 +1738,7 @@ def get_ferrari_url(page_data,progress):
     return page_data+'|User-Agent=iPad&X-Playback-Session-Id='+playback
     
 def get_dag_url(page_data):
-    print 'get_dag_url',page_data
+#    print 'get_dag_url',page_data
     if '127.0.0.1' in page_data:
         return revist_dag(page_data)
     elif re_me(page_data, 'wmsAuthSign%3D([^%&]+)') != '':
@@ -1778,11 +1796,11 @@ def PlayPV2Link(url):
         urlToPlay=re.findall(url+'..programTitle.*?programURL\\>(.*?)\\<',xmldata)[0]
     else:
         urlToPlay=base64.b64decode(url)
-    print 'urlToPlay',urlToPlay    
+#    print 'urlToPlay',urlToPlay    
     urlToPlay+=getPV2Auth()
-    print 'urlToPlay',urlToPlay
+#    print 'urlToPlay',urlToPlay
     listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
-    print "playing stream name: " + str(name) 
+#    print "playing stream name: " + str(name) 
     xbmc.Player( xbmc.PLAYER_CORE_AUTO ).play( urlToPlay, listitem)  
     
 def PlayOtherUrl ( url ):
@@ -1848,7 +1866,7 @@ def PlayOtherUrl ( url ):
     if '[CDATA' in dag_url:
         dag_url=dag_url.split('CDATA[')[1].split(']')[0]#
 
-    print 'dag_url',dag_url,name
+#    print 'dag_url',dag_url,name
     
     if '?securitytype=2' in url:
         opener = urllib2.build_opener(NoRedirection)
@@ -1856,7 +1874,7 @@ def PlayOtherUrl ( url ):
         dag_url = response.info().getheader('Location')
         if '127.0.0.1' not in dag_url: 
             dag_url='rtmp://quinzelivefs.fplive.net/quinzelive-live live=true timeout=15 playpath=%s'%dag_url.split('/')[-1]
-            print 'redir dag_url',dag_url
+#            print 'redir dag_url',dag_url
             direct=True
 
         
@@ -1870,21 +1888,21 @@ def PlayOtherUrl ( url ):
         dag_url =re.findall(dat_pattern,link)[0]
    
         
-    print 'dag_url2',dag_url
+#    print 'dag_url2',dag_url
     if direct:
         final_url=dag_url
     else:
         final_url=get_dag_url(dag_url)
     
-    print 'final_urlllllllllllll',final_url
+#    print 'final_urlllllllllllll',final_url
 
     if base64.b64decode('amFkb29fdG9rZW4=') in final_url or 'elasticbeanstalk' in final_url:
         print 'In Ferari url'
         final_url=get_ferrari_url(final_url,progress)        
     progress.update( 100, "", "Almost done..", "" )
-    print final_url
+#    print final_url
     listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
-    print "playing stream name: " + str(name) 
+#    print "playing stream name: " + str(name) 
     xbmc.Player( xbmc.PLAYER_CORE_AUTO ).play( final_url, listitem)    
 
 def AddChannelsFromEbound():
@@ -1905,7 +1923,7 @@ def AddChannelsFromEbound():
 
 	match =re.findall('<a href=".*?stream=(.*?)".*?src="(.*?)" (.)', link,re.M)
 
-	print match
+#	print match
 	expressExists=False
 	expressCName='express'
 	arynewsAdded=False
@@ -1989,15 +2007,42 @@ def convert(s):
         return s.group(0).encode('latin1').decode('utf8')
     except:
         return s.group(0)
-		
+        
+def AddProgramsAndShows(Fromurl):
+    CookieJar=getZemCookieJar()
+    headers=[('User-Agent','Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')]
+    link=getUrl(Fromurl,cookieJar=CookieJar, headers=headers)
+    CookieJar.save (ZEMCOOKIEFILE,ignore_discard=True)
+    link=link.split('<select data-placeholder="Choose a Program..."')[1].split('</select>')[0]
+#    print link    
+    match =re.findall('<optgroup label=\'(.*?)\'', link, re.UNICODE)
+    h = HTMLParser.HTMLParser()
+    #'<option value="(.*?)">(.*?)<'
+    #<optgroup label='(.*?)'
+    for cname in match:
+        addDir(Colored(cname,'ZM'),cname ,-9,'', True,isItFolder=False)
+        subprogs=link.split('<optgroup label=\'%s\''%cname)[1].split('</optgroup>')[0]
+        submatch=re.findall('<option value="(.*?)">(.*?)<', subprogs, re.UNICODE)
+        for csubname in submatch:
+    #		tname=cname[2]#
+            addDir('    '+csubname[1],mainurl+ csubname[0] ,43,'', True,isItFolder=True)
+    return
+
+    
 def AddShows(Fromurl):
 #	print Fromurl
-	req = urllib2.Request(Fromurl)
-	req.add_header('User-Agent','Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
-	response = urllib2.urlopen(req)
-	link=response.read()
-	response.close()
+	CookieJar=getZemCookieJar()
+#	req = urllib2.Request(Fromurl)
+#	req.add_header('User-Agent','Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
+#	response = urllib2.urlopen(req)
+#	link=response.read()
+#	response.close()
+	headers=[('User-Agent','Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')]
+	link=getUrl(Fromurl,cookieJar=CookieJar, headers=headers)
+    
+
 #	print link
+#cloudflare.createCookie('http://www.movie25.ag/',Cookie_Jar,'Mozilla/5.0 (Windows NT 6.1; rv:14.0) Gecko/20100101 Firefox/14.0.1')
 #	print "addshows"
 #	match=re.compile('<param name="URL" value="(.+?)">').findall(link)
 #	match=re.compile('<a href="(.+?)"').findall(link)
@@ -2006,10 +2051,15 @@ def AddShows(Fromurl):
 #	match =re.findall('onclick="playChannel\(\'(.*?)\'\);".?>(.*?)</a>', link, re.DOTALL|re.IGNORECASE)
 #	match =re.findall('<div class=\"post-title\"><a href=\"(.*?)\".*<b>(.*)<\/b><\/a>', link, re.IGNORECASE)
 #	match =re.findall('<img src="(.*?)" alt=".*".+<\/a>\n*.+<div class="post-title"><a href="(.*?)".*<b>(.*)<\/b>', link, re.UNICODE)
+	CookieJar.save (ZEMCOOKIEFILE,ignore_discard=True)
 
 	if '<div id="top-articles">' in link:
 		link=link.split('<div id="top-articles">')[0]
 	match =re.findall('<div class="thumbnail">\\s*<a href="(.*?)".*\s*<img class="thumb".*?src="(.*?)" alt="(.*?)"', link, re.UNICODE)
+	if len(match)==0:
+		match =re.findall('<div class="thumbnail">\s*<a href="(.*?)".*\s*<img.*?.*?src="(.*?)".* alt="(.*?)"', link, re.UNICODE)
+
+
 #	print link
 #	print match
 
@@ -2072,15 +2122,15 @@ def PlayShowLink ( url ):
 	time = 5000  #in miliseconds
  	defaultLinkType=0 #0 youtube,1 DM,2 tunepk
 	defaultLinkType=selfAddon.getSetting( "DefaultVideoType" ) 
-	print defaultLinkType
-	print "LT link is" + linkType
+#	print defaultLinkType
+#	print "LT link is" + linkType
 	# if linktype is not provided then use the defaultLinkType
 	
 	if linkType.upper()=="SHOWALL" or (linkType.upper()=="" and defaultLinkType=="4"):
 		ShowAllSources(url,link)
 		return
 	if linkType.upper()=="DM" or (linkType=="" and defaultLinkType=="0"):
-		print "PlayDM"
+#		print "PlayDM"
 		line1 = "Playing DM Link"
 		xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
 #		print link
@@ -2091,7 +2141,7 @@ def PlayShowLink ( url ):
 			ShowAllSources(url,link)
 			return 
 		playURL=match[0][0]
-		print playURL
+#		print playURL
 		playlist = xbmc.PlayList(1)
 		playlist.clear()
 		listitem = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
@@ -2108,7 +2158,7 @@ def PlayShowLink ( url ):
 	elif  linkType.upper()=="EBOUND"  or (linkType=="" and defaultLinkType=="3"):
 		line1 = "Playing Ebound Link"
 		xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
-		print "Eboundlink"
+#		print "Eboundlink"
 		playURL= match =re.findall(' src=".*?ebound\\.tv.*?site=(.*?)&.*?date=(.*?)\\&', link)
 		if len(playURL)==0:
 			line1 = "EBound link not found"
@@ -2136,7 +2186,7 @@ def PlayShowLink ( url ):
 
 		stream_url=base64.b64decode('cnRtcDovL2Nkbi5lYm91bmQudHYvdm9kIHBsYXlwYXRoPW1wNDp2b2QvJXMvJXMgYXBwPXZvZD93bXNBdXRoU2lnbj0lcyBzd2Z1cmw9aHR0cDovL3d3dy5lYm91bmRzZXJ2aWNlcy5jb20vbGl2ZS92Ni9wbGF5ZXIuc3dmP2RvbWFpbj13d3cuemVtdHYuY29tJmNoYW5uZWw9JXMmY291bnRyeT1FVSBwYWdlVXJsPSVzIHRjVXJsPXJ0bXA6Ly9jZG4uZWJvdW5kLnR2L3ZvZD93bXNBdXRoU2lnbj0lcyBsaXZlPXRydWUgdGltZW91dD0xNQ==')%(dt,clip,strval,clip,urli,strval)
 
-		print stream_url
+#		print stream_url
 		playlist = xbmc.PlayList(1)
 		playlist.clear()
 		listitem = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
@@ -2149,7 +2199,7 @@ def PlayShowLink ( url ):
 	elif  linkType.upper()=="LINK"  or (linkType=="" and defaultLinkType=="1"):
 		line1 = "Playing Tune.pk Link"
 		xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
-		print "PlayLINK"
+#		print "PlayLINK"
 		playURL= match =re.findall('src="(.*?(tune\.pk).*?)"', link)
 		if len(playURL)==0:
 			line1 = "Link.pk link not found"
@@ -2158,7 +2208,7 @@ def PlayShowLink ( url ):
 			return 
 
 		playURL=match[0][0]
-		print playURL
+#		print playURL
 		playlist = xbmc.PlayList(1)
 		playlist.clear()
 		listitem = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
@@ -2166,14 +2216,14 @@ def PlayShowLink ( url ):
 		listitem.setProperty('mimetype', 'video/x-msvideo')
 		listitem.setProperty('IsPlayable', 'true')
 		stream_url = urlresolver.HostedMediaFile(playURL).resolve()
-		print stream_url
+#		print stream_url
 		playlist.add(stream_url,listitem)
 		xbmcPlayer = xbmc.Player(xbmc.PLAYER_CORE_AUTO)
 		xbmcPlayer.play(playlist)
 	elif  linkType.upper()=="PLAYWIRE"  or (linkType=="" and defaultLinkType=="2"):
 		line1 = "Playing Playwire Link"
 		xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
-		print "Playwire"
+#		print "Playwire"
 		playURL =re.findall('src=".*?(playwire).*?data-publisher-id="(.*?)"\s*data-video-id="(.*?)"', link)
 		V=1
 		if len(playURL)==0:
@@ -2193,11 +2243,11 @@ def PlayShowLink ( url ):
 			link=response.read()
 			response.close()
 			playURL =base64.b64decode("aHR0cDovL2Nkbi5wbGF5d2lyZS5jb20vJXMvJXM=")%(PubId,re.findall('src":".*?mp4:(.*?)"', link)[0])
-			print 'playURL',playURL
+#			print 'playURL',playURL
 		else:
 			playURL=playURL[0]
 			if playURL.startswith('//'): playURL='http:'+playURL
-			print playURL            
+#			print playURL            
 			reg='media":\{"(.*?)":"(.*?)"'
 			req = urllib2.Request(playURL)
 			req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
@@ -2208,7 +2258,7 @@ def PlayShowLink ( url ):
 				playURL=playURL[0]
 				ty=playURL[0]
 				innerUrl=playURL[1]
-				print innerUrl
+#				print innerUrl
 				req = urllib2.Request(innerUrl)
 				req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
 				response = urllib2.urlopen(req)
@@ -2223,7 +2273,7 @@ def PlayShowLink ( url ):
 		listitem.setProperty('mimetype', 'video/x-msvideo')
 		listitem.setProperty('IsPlayable', 'true')
 		stream_url = playURL#urlresolver.HostedMediaFile(playURL).resolve()
-		print 'stream_url',stream_url
+#		print 'stream_url',stream_url
 		playlist.add(stream_url,listitem)
 		xbmcPlayer = xbmc.Player(xbmc.PLAYER_CORE_AUTO)
 		xbmcPlayer.play(playlist)
@@ -2246,7 +2296,7 @@ def PlayShowLink ( url ):
 
 def ShowAllSources(url, loadedLink=None):
 	global linkType
-	print 'show all sources',url
+#	print 'show all sources',url
 	link=loadedLink
 	if not loadedLink:
 		req = urllib2.Request(url)
@@ -2256,17 +2306,17 @@ def ShowAllSources(url, loadedLink=None):
 		response.close()
 	available_source=[]
 	playURL =re.findall('src=".*?(playwire).*?data-publisher-id="(.*?)"\s*data-video-id="(.*?)"', link)
-	print 'playURL',playURL
+#	print 'playURL',playURL
 	if not len(playURL)==0:
 		available_source.append('Playwire Source')
 
 	playURL =re.findall('data-config="(.*?config.playwire.com.*?)"', link)
-	print 'playURL',playURL
+#	print 'playURL',playURL
 	if not len(playURL)==0:
 		available_source.append('Playwire Source')
 
 	playURL =re.findall('src="(.*?ebound\\.tv.*?)"', link)
-	print 'playURL',playURL
+#	print 'playURL',playURL
 	if not len(playURL)==0:
 		available_source.append('Ebound Source')		
 		 
@@ -2287,7 +2337,7 @@ def ShowAllSources(url, loadedLink=None):
 		index = dialog.select('Choose your stream', available_source)
 		if index > -1:
 			linkType=available_source[index].replace(' Source','').replace('Daily Motion','DM').upper()
-			print 'linkType',linkType
+#			print 'linkType',linkType
 			PlayShowLink(url);
 
 def PlayLiveLink ( url ):
@@ -2329,7 +2379,7 @@ def PlayLiveLink ( url ):
 	time = 2000  #in miliseconds
 	defaultStreamType=0 #0 RTMP,1 HTTP
 	defaultStreamType=selfAddon.getSetting( "DefaultStreamType" ) 
-	print 'defaultStreamType',defaultStreamType
+#	print 'defaultStreamType',defaultStreamType
 	if 1==2 and (linkType=="HTTP" or (linkType=="" and defaultStreamType=="1")): #disable http streaming for time being
 #	print link
 		line1 = "Playing Http Stream"
@@ -2350,7 +2400,7 @@ def PlayLiveLink ( url ):
 		
 		#xbmc.Player().play(playlist)
 		listitem = xbmcgui.ListItem( label = str(cName), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ), path=strval )
-		print "playing stream name: " + str(cName) 
+#		print "playing stream name: " + str(cName) 
 		listitem.setInfo( type="video", infoLabels={ "Title": cName, "Path" : strval } )
 		listitem.setInfo( type="video", infoLabels={ "Title": cName, "Plot" : cName, "TVShowTitle": cName } )
 		xbmc.Player(PLAYER_CORE_AUTO).play( str(strval), listitem)
@@ -2368,7 +2418,7 @@ def PlayLiveLink ( url ):
 		
 
         
-		print link
+#		print link
 		#match =re.findall("=(.*)", link)
 
 		#print url
@@ -2384,10 +2434,10 @@ def PlayLiveLink ( url ):
 
 		playfile=base64.b64decode('cnRtcDovL2Nkbi5lYm91bmQudHYvdHY/d21zQXV0aFNpZ249LyVzIGFwcD10dj93bXNBdXRoU2lnbj0lcyBzd2Z1cmw9aHR0cDovL3d3dy5lYm91bmRzZXJ2aWNlcy5jb20vbGl2ZS92Ni9qd3BsYXllci5mbGFzaC5zd2Y/ZG9tYWluPXd3dy5lYm91bmRzZXJ2aWNlcy5jb20mY2hhbm5lbD0lcyZjb3VudHJ5PUVVIHBhZ2VVcmw9aHR0cDovL3d3dy5lYm91bmRzZXJ2aWNlcy5jb20vY2hhbm5lbC5waHA/YXBwPXR2JnN0cmVhbT0lcyB0Y1VybD1ydG1wOi8vY2RuLmVib3VuZC50di90dj93bXNBdXRoU2lnbj0lcyBsaXZlPXRydWUgdGltZW91dD0xNQ==')%(cName,strval,cName,cName,strval)
 		progress.update( 100, "", "Almost done..", "" )
-		print playfile
+#		print playfile
 		#xbmc.Player().play(playlist)
 		listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
-		print "playing stream name: " + str(name) 
+#		print "playing stream name: " + str(name) 
 		#listitem.setInfo( type="video", infoLabels={ "Title": name, "Path" : playfile } )
 		#listitem.setInfo( type="video", infoLabels={ "Title": name, "Plot" : name, "TVShowTitle": name } )
 		xbmc.Player( xbmc.PLAYER_CORE_AUTO ).play( playfile, listitem)
@@ -2432,9 +2482,9 @@ try:
 	if mode==None or url==None or len(url)<1:
 		print "InAddTypes"
 		Addtypes()
-	elif mode==2:
-		print "Ent url is "+name
-		AddEnteries(name)
+	elif mode==2 or mode==43:
+		print "Ent url is ",name,url        
+		AddEnteries(name, url)
 
 	elif mode==3:
 		print "Play url is "+url
