@@ -24,3 +24,5 @@ B]Version 1.0.3[/B]
 
 [B]Version 1.1.0[/B]
 - Updated decryption
+[B]Version 1.1.1[/B]
+- Updated regex

@@ -127,7 +127,13 @@ def getLiveUrl(url):
     #print link,zzUrl
     #link=zzUrl
     progress.update( 90, "", "Finding links..", "" )
-    match= re.findall('SWFObject\(\'(.*?)\',.*file\',\'(.*?)\'.*streamer\',\'(.*?)\'', link, re.DOTALL)
+    print 'final match is',match,link
+    progress.update( 100, "", "Finding links..", "" )   
+    if 'file:"' in link:
+        match=re.findall('file:"(.*?)"', link)
+        return {'url':match[0]+'|Referer='+zzUrl}
+    else:
+        match= re.findall('SWFObject\(\'(.*?)\',.*file\',\'(.*?)\'.*streamer\',\'(.*?)\'', link, re.DOTALL)
     
     
     #match= re.findall('(http.*?playlist.*?)', link)
@@ -135,12 +141,11 @@ def getLiveUrl(url):
    
     #link=getURL(match[0][0],referer=url, mobile=True).result;
    # match= re.findall('(http.*?playlist.*?)\\s', link, re.DOTALL)
-    print 'final match is',match,link
-    progress.update( 100, "", "Finding links..", "" )
+
 
     if len(match)==0:
         return None
-    #return {'url':match[0]+'|Referer='+zzUrl}
+    
     return {'rtmp':match[0][2],'playpath':match[0][1],'swf':match[0][0],'pageUrl':zzUrl}
     
     
@@ -155,7 +160,7 @@ def PlayLiveLink ( url,name ):
         time=2000
         xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
 
-        if 1==1:
+        if 'url' not in urlDic:
             rtmp=urlDic["rtmp"]
             playPath=urlDic["playpath"]
             swf=urlDic["swf"]
