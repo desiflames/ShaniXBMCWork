@@ -1,3 +1,6 @@
+Version 1.9.5
+revised list functionality in regex
+
 Version 1.9.4
 revised list functionality in regex
 

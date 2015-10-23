@@ -2570,20 +2570,20 @@ elif mode==17:
 #        print listlink,listtitle,listthumbnail,ret
         d=''
 #        print 'm is' , m
-        print 'regexs',regexs
+#        print 'regexs',regexs
         regexname=m['name']
         existing_list=regexs.pop(regexname)
-        print 'final regexs',regexs,regexname
+ #       print 'final regexs',regexs,regexname
         url=''
         import copy
         ln=''
         for obj in ret:
             newcopy=copy.deepcopy(regexs)
-            print 'newcopy',newcopy, len(newcopy)
+#            print 'newcopy',newcopy, len(newcopy)
             listrepeatT=listrepeat
             i=0
             for i in range(len(obj)):
-                print 'i is ',i, len(obj), len(newcopy)
+#                print 'i is ',i, len(obj), len(newcopy)
                 if len(newcopy)>0:
                     for the_keyO, the_valueO in newcopy.iteritems():
                         if the_valueO is not None:
@@ -2601,7 +2601,7 @@ elif mode==17:
                                         the_valueO[the_key]=the_value.replace('[' + regexname+'.param'+str(i+1) + ']', obj[i].decode('utf-8') )
                 listrepeatT=listrepeatT.replace('[' + regexname+'.param'+str(i+1) + ']',obj[i].decode('utf-8')) 
             #newcopy = urllib.quote(repr(newcopy))
-            print 'new regex list', repr(newcopy), repr(listrepeatT)
+#            print 'new regex list', repr(newcopy), repr(listrepeatT)
 #            addLink(listlinkT,listtitleT.encode('utf-8', 'ignore'),listthumbnailT,'','','','',True,None,newcopy, len(ret))
             regex_xml=''
             if len(newcopy)>0:
@@ -2609,7 +2609,7 @@ elif mode==17:
                 regex_xml=regex_xml.split('<lsproroot>')[1].split('</lsproroot')[0]
           
             ln+='\n<item>%s\n%s</item>'%(listrepeatT,regex_xml)   
-            print repr(ln)
+#            print repr(ln)
 #            print newcopy
                 
 #            ln+='</item>'
