@@ -2011,7 +2011,14 @@ def convert(s):
 def AddProgramsAndShows(Fromurl):
     CookieJar=getZemCookieJar()
     headers=[('User-Agent','Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')]
-    link=getUrl(Fromurl,cookieJar=CookieJar, headers=headers)
+#    link=getUrl(Fromurl,cookieJar=CookieJar, headers=headers)
+    try:
+        link=getUrl(Fromurl,cookieJar=CookieJar, headers=headers)
+    except:
+        import cloudflare
+        cloudflare.createCookie(Fromurl,CookieJar,'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
+        link=getUrl(Fromurl,cookieJar=CookieJar, headers=headers)
+
     CookieJar.save (ZEMCOOKIEFILE,ignore_discard=True)
     link=link.split('<select data-placeholder="Choose a Program..."')[1].split('</select>')[0]
 #    print link    
@@ -2030,58 +2037,64 @@ def AddProgramsAndShows(Fromurl):
 
     
 def AddShows(Fromurl):
-#	print Fromurl
-	CookieJar=getZemCookieJar()
-#	req = urllib2.Request(Fromurl)
-#	req.add_header('User-Agent','Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
-#	response = urllib2.urlopen(req)
-#	link=response.read()
-#	response.close()
-	headers=[('User-Agent','Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')]
-	link=getUrl(Fromurl,cookieJar=CookieJar, headers=headers)
-    
-
-#	print link
-#cloudflare.createCookie('http://www.movie25.ag/',Cookie_Jar,'Mozilla/5.0 (Windows NT 6.1; rv:14.0) Gecko/20100101 Firefox/14.0.1')
-#	print "addshows"
-#	match=re.compile('<param name="URL" value="(.+?)">').findall(link)
-#	match=re.compile('<a href="(.+?)"').findall(link)
-#	match=re.compile('onclick="playChannel\(\'(.*?)\'\);">(.*?)</a>').findall(link)
-#	match =re.findall('onclick="playChannel\(\'(.*?)\'\);">(.*?)</a>', link, re.DOTALL|re.IGNORECASE)
-#	match =re.findall('onclick="playChannel\(\'(.*?)\'\);".?>(.*?)</a>', link, re.DOTALL|re.IGNORECASE)
-#	match =re.findall('<div class=\"post-title\"><a href=\"(.*?)\".*<b>(.*)<\/b><\/a>', link, re.IGNORECASE)
-#	match =re.findall('<img src="(.*?)" alt=".*".+<\/a>\n*.+<div class="post-title"><a href="(.*?)".*<b>(.*)<\/b>', link, re.UNICODE)
-	CookieJar.save (ZEMCOOKIEFILE,ignore_discard=True)
-
-	if '<div id="top-articles">' in link:
-		link=link.split('<div id="top-articles">')[0]
-	match =re.findall('<div class="thumbnail">\\s*<a href="(.*?)".*\s*<img class="thumb".*?src="(.*?)" alt="(.*?)"', link, re.UNICODE)
-	if len(match)==0:
-		match =re.findall('<div class="thumbnail">\s*<a href="(.*?)".*\s*<img.*?.*?src="(.*?)".* alt="(.*?)"', link, re.UNICODE)
+    #	print Fromurl
+    CookieJar=getZemCookieJar()
+    #	req = urllib2.Request(Fromurl)
+    #	req.add_header('User-Agent','Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
+    #	response = urllib2.urlopen(req)
+    #	link=response.read()
+    #	response.close()
+    headers=[('User-Agent','Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')]
+    #	link=getUrl(Fromurl,cookieJar=CookieJar, headers=headers)
+    try:
+        link=getUrl(Fromurl,cookieJar=CookieJar, headers=headers)
+    except:
+        import cloudflare
+        cloudflare.createCookie(Fromurl,CookieJar,'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
+        link=getUrl(Fromurl,cookieJar=CookieJar, headers=headers)
 
 
-#	print link
-#	print match
+    #	print link
+    #cloudflare.createCookie('http://www.movie25.ag/',Cookie_Jar,'Mozilla/5.0 (Windows NT 6.1; rv:14.0) Gecko/20100101 Firefox/14.0.1')
+    #	print "addshows"
+    #	match=re.compile('<param name="URL" value="(.+?)">').findall(link)
+    #	match=re.compile('<a href="(.+?)"').findall(link)
+    #	match=re.compile('onclick="playChannel\(\'(.*?)\'\);">(.*?)</a>').findall(link)
+    #	match =re.findall('onclick="playChannel\(\'(.*?)\'\);">(.*?)</a>', link, re.DOTALL|re.IGNORECASE)
+    #	match =re.findall('onclick="playChannel\(\'(.*?)\'\);".?>(.*?)</a>', link, re.DOTALL|re.IGNORECASE)
+    #	match =re.findall('<div class=\"post-title\"><a href=\"(.*?)\".*<b>(.*)<\/b><\/a>', link, re.IGNORECASE)
+    #	match =re.findall('<img src="(.*?)" alt=".*".+<\/a>\n*.+<div class="post-title"><a href="(.*?)".*<b>(.*)<\/b>', link, re.UNICODE)
+    CookieJar.save (ZEMCOOKIEFILE,ignore_discard=True)
 
-#	print match
-	h = HTMLParser.HTMLParser()
+    if '<div id="top-articles">' in link:
+        link=link.split('<div id="top-articles">')[0]
+    match =re.findall('<div class="thumbnail">\\s*<a href="(.*?)".*\s*<img class="thumb".*?src="(.*?)" alt="(.*?)"', link, re.UNICODE)
+    if len(match)==0:
+        match =re.findall('<div class="thumbnail">\s*<a href="(.*?)".*\s*<img.*?.*?src="(.*?)".* alt="(.*?)"', link, re.UNICODE)
 
-	for cname in match:
-		tname=cname[2]
-		tname=re.sub(r'[\x80-\xFF]+', convert,tname )
-		#tname=repr(tname)
-		addDir(tname,cname[0] ,3,cname[1], True,isItFolder=False)
-		
 
-	match =re.findall('<a class="nextpostslink" rel="next" href="(.*?)">', link, re.IGNORECASE)
-	
-	if len(match)==1:
-		addDir('Next Page' ,match[0] ,2,'',isItFolder=True)
-#       print match
-	
-	return
+    #	print link
+    #	print match
 
-	
+    #	print match
+    h = HTMLParser.HTMLParser()
+
+    for cname in match:
+        tname=cname[2]
+        tname=re.sub(r'[\x80-\xFF]+', convert,tname )
+        #tname=repr(tname)
+        addDir(tname,cname[0] ,3,cname[1], True,isItFolder=False)
+        
+
+    match =re.findall('<a class="nextpostslink" rel="next" href="(.*?)">', link, re.IGNORECASE)
+
+    if len(match)==1:
+        addDir('Next Page' ,match[0] ,2,'',isItFolder=True)
+    #       print match
+
+    return
+
+
 def AddChannels():
 	req = urllib2.Request(liveURL)
 	req.add_header('User-Agent','Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
@@ -2109,190 +2122,194 @@ def AddChannels():
 	
 
 def PlayShowLink ( url ): 
-	global linkType
-#	url = tabURL.replace('%s',channelName);
-	req = urllib2.Request(url)
-	req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
-	response = urllib2.urlopen(req)
-	link=response.read()
-	response.close()
-#	print url
+    global linkType
+    #	url = tabURL.replace('%s',channelName);
+#    req = urllib2.Request(url)
+#    req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
+#    response = urllib2.urlopen(req)
+#    link=response.read()
+#    response.close()
+    headers=[('User-Agent','Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')]
+    CookieJar=getZemCookieJar()
+    link=getUrl(url,cookieJar=CookieJar, headers=headers)
 
-	line1 = "Playing DM Link"
-	time = 5000  #in miliseconds
- 	defaultLinkType=0 #0 youtube,1 DM,2 tunepk
-	defaultLinkType=selfAddon.getSetting( "DefaultVideoType" ) 
-#	print defaultLinkType
-#	print "LT link is" + linkType
-	# if linktype is not provided then use the defaultLinkType
-	
-	if linkType.upper()=="SHOWALL" or (linkType.upper()=="" and defaultLinkType=="4"):
-		ShowAllSources(url,link)
-		return
-	if linkType.upper()=="DM" or (linkType=="" and defaultLinkType=="0"):
-#		print "PlayDM"
-		line1 = "Playing DM Link"
-		xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
-#		print link
-		playURL= match =re.findall('src="(http.*?(dailymotion.com).*?)"',link)
-		if len(playURL)==0:
-			line1 = "Daily motion link not found"
-			xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
-			ShowAllSources(url,link)
-			return 
-		playURL=match[0][0]
-#		print playURL
-		playlist = xbmc.PlayList(1)
-		playlist.clear()
-		listitem = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
-		listitem.setInfo("Video", {"Title":name})
-		listitem.setProperty('mimetype', 'video/x-msvideo')
-		listitem.setProperty('IsPlayable', 'true')
-		stream_url = urlresolver.HostedMediaFile(playURL).resolve()
-		print stream_url
-		playlist.add(stream_url,listitem)
-		xbmcPlayer = xbmc.Player(xbmc.PLAYER_CORE_AUTO)
-		xbmcPlayer.play(playlist)
-		#xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, listitem)
-		#src="(.*?(dailymotion).*?)"
-	elif  linkType.upper()=="EBOUND"  or (linkType=="" and defaultLinkType=="3"):
-		line1 = "Playing Ebound Link"
-		xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
-#		print "Eboundlink"
-		playURL= match =re.findall(' src=".*?ebound\\.tv.*?site=(.*?)&.*?date=(.*?)\\&', link)
-		if len(playURL)==0:
-			line1 = "EBound link not found"
-			xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
-			ShowAllSources(url,link)
-			return 
+    #	print url
 
-		playURL=match[0]
-		dt=playURL[1]
-		clip=playURL[0]
-		urli=base64.b64decode('aHR0cDovL3d3dy5lYm91bmRzZXJ2aWNlcy5jb20vaWZyYW1lL25ldy92b2RfdWdjLnBocD9zdHJlYW09bXA0OnZvZC8lcy8lcyZ3aWR0aD02MjAmaGVpZ2h0PTM1MCZjbGlwPSVzJmRheT0lcyZtb250aD11bmRlZmluZWQ=')%(dt,clip,clip,dt)
-		#req = urllib2.Request(urli)
-		#req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
-		#response = urllib2.urlopen(req)
-		#link=response.read()
-		#response.close()
-		post = {'username':'hash'}
-		post = urllib.urlencode(post)
-		req = urllib2.Request(base64.b64decode('aHR0cDovL2Vib3VuZHNlcnZpY2VzLmNvbS9mbGFzaHBsYXllcmhhc2gvaW5kZXgucGhw'))
-		req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.117 Safari/537.36')
-		response = urllib2.urlopen(req,post)
-		link=response.read()
-		response.close()
-		strval =link;# match[0]
+    line1 = "Playing DM Link"
+    time = 5000  #in miliseconds
+    defaultLinkType=0 #0 youtube,1 DM,2 tunepk
+    defaultLinkType=selfAddon.getSetting( "DefaultVideoType" ) 
+    #	print defaultLinkType
+    #	print "LT link is" + linkType
+    # if linktype is not provided then use the defaultLinkType
 
-		stream_url=base64.b64decode('cnRtcDovL2Nkbi5lYm91bmQudHYvdm9kIHBsYXlwYXRoPW1wNDp2b2QvJXMvJXMgYXBwPXZvZD93bXNBdXRoU2lnbj0lcyBzd2Z1cmw9aHR0cDovL3d3dy5lYm91bmRzZXJ2aWNlcy5jb20vbGl2ZS92Ni9wbGF5ZXIuc3dmP2RvbWFpbj13d3cuemVtdHYuY29tJmNoYW5uZWw9JXMmY291bnRyeT1FVSBwYWdlVXJsPSVzIHRjVXJsPXJ0bXA6Ly9jZG4uZWJvdW5kLnR2L3ZvZD93bXNBdXRoU2lnbj0lcyBsaXZlPXRydWUgdGltZW91dD0xNQ==')%(dt,clip,strval,clip,urli,strval)
+    if linkType.upper()=="SHOWALL" or (linkType.upper()=="" and defaultLinkType=="4"):
+        ShowAllSources(url,link)
+        return
+    if linkType.upper()=="DM" or (linkType=="" and defaultLinkType=="0"):
+    #		print "PlayDM"
+        line1 = "Playing DM Link"
+        xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
+    #		print link
+        playURL= match =re.findall('src="(http.*?(dailymotion.com).*?)"',link)
+        if len(playURL)==0:
+            line1 = "Daily motion link not found"
+            xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
+            ShowAllSources(url,link)
+            return 
+        playURL=match[0][0]
+    #		print playURL
+        playlist = xbmc.PlayList(1)
+        playlist.clear()
+        listitem = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
+        listitem.setInfo("Video", {"Title":name})
+        listitem.setProperty('mimetype', 'video/x-msvideo')
+        listitem.setProperty('IsPlayable', 'true')
+        stream_url = urlresolver.HostedMediaFile(playURL).resolve()
+        print stream_url
+        playlist.add(stream_url,listitem)
+        xbmcPlayer = xbmc.Player(xbmc.PLAYER_CORE_AUTO)
+        xbmcPlayer.play(playlist)
+        #xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, listitem)
+        #src="(.*?(dailymotion).*?)"
+    elif  linkType.upper()=="EBOUND"  or (linkType=="" and defaultLinkType=="3"):
+        line1 = "Playing Ebound Link"
+        xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
+    #		print "Eboundlink"
+        playURL= match =re.findall(' src=".*?ebound\\.tv.*?site=(.*?)&.*?date=(.*?)\\&', link)
+        if len(playURL)==0:
+            line1 = "EBound link not found"
+            xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
+            ShowAllSources(url,link)
+            return 
 
-#		print stream_url
-		playlist = xbmc.PlayList(1)
-		playlist.clear()
-		listitem = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
-		listitem.setInfo("Video", {"Title":name})
-		listitem.setProperty('mimetype', 'video/x-msvideo')
-		listitem.setProperty('IsPlayable', 'true')
-		playlist.add(stream_url,listitem)
-		xbmcPlayer = xbmc.Player(xbmc.PLAYER_CORE_AUTO)
-		xbmcPlayer.play(playlist)
-	elif  linkType.upper()=="LINK"  or (linkType=="" and defaultLinkType=="1"):
-		line1 = "Playing Tune.pk Link"
-		xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
-#		print "PlayLINK"
-		playURL= match =re.findall('src="(.*?(tune\.pk).*?)"', link)
-		if len(playURL)==0:
-			line1 = "Link.pk link not found"
-			xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
-			ShowAllSources(url,link)
-			return 
+        playURL=match[0]
+        dt=playURL[1]
+        clip=playURL[0]
+        urli=base64.b64decode('aHR0cDovL3d3dy5lYm91bmRzZXJ2aWNlcy5jb20vaWZyYW1lL25ldy92b2RfdWdjLnBocD9zdHJlYW09bXA0OnZvZC8lcy8lcyZ3aWR0aD02MjAmaGVpZ2h0PTM1MCZjbGlwPSVzJmRheT0lcyZtb250aD11bmRlZmluZWQ=')%(dt,clip,clip,dt)
+        #req = urllib2.Request(urli)
+        #req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
+        #response = urllib2.urlopen(req)
+        #link=response.read()
+        #response.close()
+        post = {'username':'hash'}
+        post = urllib.urlencode(post)
+        req = urllib2.Request(base64.b64decode('aHR0cDovL2Vib3VuZHNlcnZpY2VzLmNvbS9mbGFzaHBsYXllcmhhc2gvaW5kZXgucGhw'))
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.117 Safari/537.36')
+        response = urllib2.urlopen(req,post)
+        link=response.read()
+        response.close()
+        strval =link;# match[0]
 
-		playURL=match[0][0]
-#		print playURL
-		playlist = xbmc.PlayList(1)
-		playlist.clear()
-		listitem = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
-		listitem.setInfo("Video", {"Title":name})
-		listitem.setProperty('mimetype', 'video/x-msvideo')
-		listitem.setProperty('IsPlayable', 'true')
-		stream_url = urlresolver.HostedMediaFile(playURL).resolve()
-#		print stream_url
-		playlist.add(stream_url,listitem)
-		xbmcPlayer = xbmc.Player(xbmc.PLAYER_CORE_AUTO)
-		xbmcPlayer.play(playlist)
-	elif  linkType.upper()=="PLAYWIRE"  or (linkType=="" and defaultLinkType=="2"):
-		line1 = "Playing Playwire Link"
-		xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
-#		print "Playwire"
-		playURL =re.findall('src=".*?(playwire).*?data-publisher-id="(.*?)"\s*data-video-id="(.*?)"', link)
-		V=1
-		if len(playURL)==0:
-			playURL =re.findall('data-config="(.*?config.playwire.com.*?)"', link)
-			V=2
-		if len(playURL)==0:
-			line1 = "Playwire link not found"
-			xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
-			ShowAllSources(url,link)
-			return 
-		if V==1:
-			(playWireVar,PubId,videoID)=playURL[0]
-			cdnUrl=base64.b64decode("aHR0cDovL2Nkbi5wbGF5d2lyZS5jb20vdjIvJXMvY29uZmlnLyVzLmpzb24=")%(PubId,videoID)
-			req = urllib2.Request(cdnUrl)
-			req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
-			response = urllib2.urlopen(req)
-			link=response.read()
-			response.close()
-			playURL =base64.b64decode("aHR0cDovL2Nkbi5wbGF5d2lyZS5jb20vJXMvJXM=")%(PubId,re.findall('src":".*?mp4:(.*?)"', link)[0])
-#			print 'playURL',playURL
-		else:
-			playURL=playURL[0]
-			if playURL.startswith('//'): playURL='http:'+playURL
-#			print playURL            
-			reg='media":\{"(.*?)":"(.*?)"'
-			req = urllib2.Request(playURL)
-			req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
-			response = urllib2.urlopen(req)
-			link=response.read()
-			playURL =re.findall(reg, link)
-			if len(playURL)>0:
-				playURL=playURL[0]
-				ty=playURL[0]
-				innerUrl=playURL[1]
-#				print innerUrl
-				req = urllib2.Request(innerUrl)
-				req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
-				response = urllib2.urlopen(req)
-				link=response.read()
-				reg='baseURL>(.*?)<\/baseURL>\s*?<media url="(.*?)"'
-				playURL =re.findall(reg, link)[0]
-				playURL=playURL[0]+'/'+playURL[1]
-		playlist = xbmc.PlayList(1)
-		playlist.clear()
-		listitem = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
-		listitem.setInfo("Video", {"Title":name})
-		listitem.setProperty('mimetype', 'video/x-msvideo')
-		listitem.setProperty('IsPlayable', 'true')
-		stream_url = playURL#urlresolver.HostedMediaFile(playURL).resolve()
-#		print 'stream_url',stream_url
-		playlist.add(stream_url,listitem)
-		xbmcPlayer = xbmc.Player(xbmc.PLAYER_CORE_AUTO)
-		xbmcPlayer.play(playlist)
-		#bmcplugin.setResolvedUrl(int(sys.argv[1]), True, listitem)#src="(.*?(tune\.pk).*?)"
-	else:	#either its default or nothing selected
-		line1 = "Playing Youtube Link"
-		xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
-		youtubecode= match =re.findall('<strong>Youtube<\/strong>.*?src=\".*?embed\/(.*?)\?.*\".*?<\/iframe>', link,re.DOTALL| re.IGNORECASE)
-		if len(youtubecode)==0:
-			line1 = "Youtube link not found"
-			xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
-			ShowAllSources(url,link)
-			return
-		youtubecode=youtubecode[0]
-		uurl = 'plugin://plugin.video.youtube/?action=play_video&videoid=%s' % youtubecode
-#	print uurl
-		xbmc.executebuiltin("xbmc.PlayMedia("+uurl+")")
-	
-	return
+        stream_url=base64.b64decode('cnRtcDovL2Nkbi5lYm91bmQudHYvdm9kIHBsYXlwYXRoPW1wNDp2b2QvJXMvJXMgYXBwPXZvZD93bXNBdXRoU2lnbj0lcyBzd2Z1cmw9aHR0cDovL3d3dy5lYm91bmRzZXJ2aWNlcy5jb20vbGl2ZS92Ni9wbGF5ZXIuc3dmP2RvbWFpbj13d3cuemVtdHYuY29tJmNoYW5uZWw9JXMmY291bnRyeT1FVSBwYWdlVXJsPSVzIHRjVXJsPXJ0bXA6Ly9jZG4uZWJvdW5kLnR2L3ZvZD93bXNBdXRoU2lnbj0lcyBsaXZlPXRydWUgdGltZW91dD0xNQ==')%(dt,clip,strval,clip,urli,strval)
+
+    #		print stream_url
+        playlist = xbmc.PlayList(1)
+        playlist.clear()
+        listitem = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
+        listitem.setInfo("Video", {"Title":name})
+        listitem.setProperty('mimetype', 'video/x-msvideo')
+        listitem.setProperty('IsPlayable', 'true')
+        playlist.add(stream_url,listitem)
+        xbmcPlayer = xbmc.Player(xbmc.PLAYER_CORE_AUTO)
+        xbmcPlayer.play(playlist)
+    elif  linkType.upper()=="LINK"  or (linkType=="" and defaultLinkType=="1"):
+        line1 = "Playing Tune.pk Link"
+        xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
+    #		print "PlayLINK"
+        playURL= match =re.findall('src="(.*?(tune\.pk).*?)"', link)
+        if len(playURL)==0:
+            line1 = "Link.pk link not found"
+            xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
+            ShowAllSources(url,link)
+            return 
+
+        playURL=match[0][0]
+    #		print playURL
+        playlist = xbmc.PlayList(1)
+        playlist.clear()
+        listitem = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
+        listitem.setInfo("Video", {"Title":name})
+        listitem.setProperty('mimetype', 'video/x-msvideo')
+        listitem.setProperty('IsPlayable', 'true')
+        stream_url = urlresolver.HostedMediaFile(playURL).resolve()
+    #		print stream_url
+        playlist.add(stream_url,listitem)
+        xbmcPlayer = xbmc.Player(xbmc.PLAYER_CORE_AUTO)
+        xbmcPlayer.play(playlist)
+    elif  linkType.upper()=="PLAYWIRE"  or (linkType=="" and defaultLinkType=="2"):
+        line1 = "Playing Playwire Link"
+        xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
+    #		print "Playwire"
+        playURL =re.findall('src=".*?(playwire).*?data-publisher-id="(.*?)"\s*data-video-id="(.*?)"', link)
+        V=1
+        if len(playURL)==0:
+            playURL =re.findall('data-config="(.*?config.playwire.com.*?)"', link)
+            V=2
+        if len(playURL)==0:
+            line1 = "Playwire link not found"
+            xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
+            ShowAllSources(url,link)
+            return 
+        if V==1:
+            (playWireVar,PubId,videoID)=playURL[0]
+            cdnUrl=base64.b64decode("aHR0cDovL2Nkbi5wbGF5d2lyZS5jb20vdjIvJXMvY29uZmlnLyVzLmpzb24=")%(PubId,videoID)
+            req = urllib2.Request(cdnUrl)
+            req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
+            response = urllib2.urlopen(req)
+            link=response.read()
+            response.close()
+            playURL =base64.b64decode("aHR0cDovL2Nkbi5wbGF5d2lyZS5jb20vJXMvJXM=")%(PubId,re.findall('src":".*?mp4:(.*?)"', link)[0])
+    #			print 'playURL',playURL
+        else:
+            playURL=playURL[0]
+            if playURL.startswith('//'): playURL='http:'+playURL
+    #			print playURL            
+            reg='media":\{"(.*?)":"(.*?)"'
+            req = urllib2.Request(playURL)
+            req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
+            response = urllib2.urlopen(req)
+            link=response.read()
+            playURL =re.findall(reg, link)
+            if len(playURL)>0:
+                playURL=playURL[0]
+                ty=playURL[0]
+                innerUrl=playURL[1]
+    #				print innerUrl
+                req = urllib2.Request(innerUrl)
+                req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
+                response = urllib2.urlopen(req)
+                link=response.read()
+                reg='baseURL>(.*?)<\/baseURL>\s*?<media url="(.*?)"'
+                playURL =re.findall(reg, link)[0]
+                playURL=playURL[0]+'/'+playURL[1]
+        playlist = xbmc.PlayList(1)
+        playlist.clear()
+        listitem = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
+        listitem.setInfo("Video", {"Title":name})
+        listitem.setProperty('mimetype', 'video/x-msvideo')
+        listitem.setProperty('IsPlayable', 'true')
+        stream_url = playURL#urlresolver.HostedMediaFile(playURL).resolve()
+    #		print 'stream_url',stream_url
+        playlist.add(stream_url,listitem)
+        xbmcPlayer = xbmc.Player(xbmc.PLAYER_CORE_AUTO)
+        xbmcPlayer.play(playlist)
+        #bmcplugin.setResolvedUrl(int(sys.argv[1]), True, listitem)#src="(.*?(tune\.pk).*?)"
+    else:	#either its default or nothing selected
+        line1 = "Playing Youtube Link"
+        xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
+        youtubecode= match =re.findall('<strong>Youtube<\/strong>.*?src=\".*?embed\/(.*?)\?.*\".*?<\/iframe>', link,re.DOTALL| re.IGNORECASE)
+        if len(youtubecode)==0:
+            line1 = "Youtube link not found"
+            xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time, __icon__))
+            ShowAllSources(url,link)
+            return
+        youtubecode=youtubecode[0]
+        uurl = 'plugin://plugin.video.youtube/?action=play_video&videoid=%s' % youtubecode
+    #	print uurl
+        xbmc.executebuiltin("xbmc.PlayMedia("+uurl+")")
+
+    return
 
 def ShowAllSources(url, loadedLink=None):
 	global linkType
