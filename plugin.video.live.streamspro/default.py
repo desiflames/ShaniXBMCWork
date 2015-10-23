@@ -11,6 +11,9 @@ import traceback
 import cookielib
 from BeautifulSoup import BeautifulStoneSoup, BeautifulSoup, BeautifulSOAP
 try:
+    from xml.sax.saxutils import escape
+except: traceback.print_exc()
+try:
     import json
 except:
     import simplejson as json
@@ -731,16 +734,16 @@ def parse_regex(reg_item):
                     for i in reg_item:
                         regexs[i('name')[0].string] = {}
                         regexs[i('name')[0].string]['name']=i('name')[0].string
-                        #regexs[i('name')[0].string]['expre'] = i('expres')[0].string
+                        #regexs[i('name')[0].string]['expres'] = i('expres')[0].string
                         try:
-                            regexs[i('name')[0].string]['expre'] = i('expres')[0].string
-                            if not regexs[i('name')[0].string]['expre']:
-                                regexs[i('name')[0].string]['expre']=''
+                            regexs[i('name')[0].string]['expres'] = i('expres')[0].string
+                            if not regexs[i('name')[0].string]['expres']:
+                                regexs[i('name')[0].string]['expres']=''
                         except:
                             addon_log("Regex: -- No Referer --")
                         regexs[i('name')[0].string]['page'] = i('page')[0].string
                         try:
-                            regexs[i('name')[0].string]['refer'] = i('referer')[0].string
+                            regexs[i('name')[0].string]['referer'] = i('referer')[0].string
                         except:
                             addon_log("Regex: -- No Referer --")
                         try:
@@ -770,20 +773,13 @@ def parse_regex(reg_item):
                         except:
                             addon_log("Regex: -- No includeheaders --")
 
-                        try:
-                            regexs[i('name')[0].string]['listtitle'] = i('listtitle')[0].string
-                        except:
-                            addon_log("Regex: -- No listtitle --")
                             
                         try:
-                            regexs[i('name')[0].string]['listlink'] = i('listlink')[0].string
+                            regexs[i('name')[0].string]['listrepeat'] = i('listrepeat')[0].string
+                            print 'listrepeat',regexs[i('name')[0].string]['listrepeat'],i('listrepeat')[0].string, i
                         except:
-                            addon_log("Regex: -- No listlink --")
-
-                        try:
-                            regexs[i('name')[0].string]['listthumbnail'] = i('listthumbnail')[0].string
-                        except:
-                            addon_log("Regex: -- No listthumbnail --")                            
+                            addon_log("Regex: -- No listrepeat --")
+                    
                             
 
                         try:
@@ -984,8 +980,8 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                         req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:14.0) Gecko/20100101 Firefox/14.0.1')
                         proxytouse=None
 
-                        if 'refer' in m:
-                            req.add_header('Referer', m['refer'])
+                        if 'referer' in m:
+                            req.add_header('Referer', m['referer'])
                         if 'accept' in m:
                             req.add_header('Accept', m['accept'])
                         if 'agent' in m:
@@ -1094,48 +1090,41 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                             link=val
                         else:
                             link=m['page']
-                if '$pyFunction:playmedia(' in m['expre'] or 'ActivateWindow'  in m['expre']  or '$PLAYERPROXY$=' in url  or  any(x in url for x in g_ignoreSetResolved):
+                if '$pyFunction:playmedia(' in m['expres'] or 'ActivateWindow'  in m['expres']  or '$PLAYERPROXY$=' in url  or  any(x in url for x in g_ignoreSetResolved):
                     setresolved=False
-                if  '$doregex' in m['expre']:
-                    m['expre']=getRegexParsed(regexs, m['expre'],cookieJar,recursiveCall=True,cachedPages=cachedPages)
-                if not m['expre']=='':
-                    print 'doing it ',m['expre']
-                    if '$LiveStreamCaptcha' in m['expre']:
+                if  '$doregex' in m['expres']:
+                    m['expres']=getRegexParsed(regexs, m['expres'],cookieJar,recursiveCall=True,cachedPages=cachedPages)
+                if not m['expres']=='':
+                    print 'doing it ',m['expres']
+                    if '$LiveStreamCaptcha' in m['expres']:
                         val=askCaptcha(m,link,cookieJar)
                         #print 'url and val',url,val
                         url = url.replace("$doregex[" + k + "]", val)
-                    elif m['expre'].startswith('$pyFunction:') or '#$pyFunction' in m['expre']:
-                        #print 'expeeeeeeeeeeeeeeeeeee',m['expre']
-                        if m['expre'].startswith('$pyFunction:'):
-                            val=doEval(m['expre'].split('$pyFunction:')[1],link,cookieJar,m)
+                    elif m['expres'].startswith('$pyFunction:') or '#$pyFunction' in m['expres']:
+                        #print 'expeeeeeeeeeeeeeeeeeee',m['expres']
+                        if m['expres'].startswith('$pyFunction:'):
+                            val=doEval(m['expres'].split('$pyFunction:')[1],link,cookieJar,m)
                         else:
-                            val=doEvalFunction(m['expre'],link,cookieJar,m)
-                        if 'ActivateWindow' in m['expre']: return
+                            val=doEvalFunction(m['expres'],link,cookieJar,m)
+                        if 'ActivateWindow' in m['expres']: return
                         print 'url k val',url,k,val
 
                         url = url.replace("$doregex[" + k + "]", val)
                     else:
-                        if 'listlink' in m:
-                            listlink=m['listlink']
-                            listtitle=''
-                            listthumbnail=''
-                            
-                            if 'listtitle' in m:
-                                listtitle = m['listtitle']
-                            if 'listthumbnail' in m:
-                                listthumbnail = m['listthumbnail']
-                            ret=re.findall(m['expre'],link)
-                            return listlink,listtitle,listthumbnail,ret, m,regexs
+                        if 'listrepeat' in m:
+                            listrepeat=m['listrepeat']
+                            ret=re.findall(m['expres'],link)
+                            return listrepeat,ret, m,regexs
                              
                         if not link=='':
                             #print 'link',link
-                            reg = re.compile(m['expre']).search(link)
+                            reg = re.compile(m['expres']).search(link)
                             val=''
                             try:
                                 val=reg.group(1).strip()
                             except: traceback.print_exc()
                         else:
-                            val=m['expre']
+                            val=m['expres']
                             
                         if rawPost:
                             print 'rawpost'
@@ -1796,7 +1785,7 @@ iid=0
 def askCaptcha(m,html_page, cookieJar):
     global iid
     iid+=1
-    expre= m['expre']
+    expre= m['expres']
     page_url = m['page']
     captcha_regex=re.compile('\$LiveStreamCaptcha\[([^\]]*)\]').findall(expre)[0]
 
@@ -1814,8 +1803,8 @@ def askCaptcha(m,html_page, cookieJar):
     print ' c capurl',captcha_url
     req = urllib2.Request(captcha_url)
     req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:14.0) Gecko/20100101 Firefox/14.0.1')
-    if 'refer' in m:
-        req.add_header('Referer', m['refer'])
+    if 'referer' in m:
+        req.add_header('Referer', m['referer'])
     if 'agent' in m:
         req.add_header('User-agent', m['agent'])
     if 'setcookie' in m:
@@ -1858,8 +1847,8 @@ def askCaptchaNew(imageregex,html_page,cookieJar,m):
     print ' c capurl',captcha_url
     req = urllib2.Request(captcha_url)
     req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:14.0) Gecko/20100101 Firefox/14.0.1')
-    if 'refer' in m:
-        req.add_header('Referer', m['refer'])
+    if 'referer' in m:
+        req.add_header('Referer', m['referer'])
     if 'agent' in m:
         req.add_header('User-agent', m['agent'])
     if 'accept' in m:
@@ -2232,7 +2221,7 @@ def addLink(url,name,iconimage,fanart,description,genre,date,showcontext,playlis
         isFolder=False
         if regexs:
             mode = '17'
-            if 'listlink' in regexs:
+            if 'listrepeat' in regexs:
                 isFolder=True
                 print 'setting as folder in link'
             contextMenu.append(('[COLOR white]!!Download Currently Playing!![/COLOR]','XBMC.RunPlugin(%s?url=%s&mode=21&name=%s)'
@@ -2294,7 +2283,7 @@ def addLink(url,name,iconimage,fanart,description,genre,date,showcontext,playlis
         if (not play_list) and not any(x in url for x in g_ignoreSetResolved) and not '$PLAYERPROXY$=' in url:#  (not url.startswith('plugin://plugin.video.f4mTester')):
             if regexs:
                 #print urllib.unquote_plus(regexs)
-                if '$pyFunction:playmedia(' not in urllib.unquote_plus(regexs) and 'notplayable' not in urllib.unquote_plus(regexs) and 'listlink' not in  urllib.unquote_plus(regexs) :
+                if '$pyFunction:playmedia(' not in urllib.unquote_plus(regexs) and 'notplayable' not in urllib.unquote_plus(regexs) and 'listrepeat' not in  urllib.unquote_plus(regexs) :
                     #print 'setting isplayable',url, urllib.unquote_plus(regexs),url
                     liz.setProperty('IsPlayable', 'true')
             else:
@@ -2371,7 +2360,33 @@ def get_epg(url, regex):
             addon_log(regex)
             return
 
+    
+##not a generic implemenation as it needs to convert            
+def d2x(d, root="root",nested=0):
 
+    op = lambda tag: '<' + tag + '>'
+    cl = lambda tag: '</' + tag + '>\n'
+    ml = lambda v,xml: xml + op(key) + str(v) + cl(key)
+
+    xml = op(root) + '\n' if root else ""
+
+    for key,vl in d.iteritems():
+        vtype = type(vl)
+        if nested==0: key='regex' #enforcing all top level tags to be named as regex
+        if vtype is list: 
+            for v in vl:
+                v=escape(v)
+                xml = ml(v,xml)         
+        
+        if vtype is dict: 
+            xml = ml('\n' + d2x(vl,None,nested+1),xml)         
+        if vtype is not list and vtype is not dict: 
+            vl=escape(vl)
+            xml = ml(vl,xml)
+
+    xml += cl(root) if root else ""
+
+    return xml
 xbmcplugin.setContent(int(sys.argv[1]), 'movies')
 
 try:
@@ -2437,6 +2452,8 @@ except:
     pass
 
 addon_log("Mode: "+str(mode))
+
+
 if not url is None:
     addon_log("URL: "+str(url.encode('utf-8')))
 addon_log("Name: "+str(name))
@@ -2548,44 +2565,56 @@ elif mode==17:
     addon_log("getRegexParsed")
 
     data=None
-    if regexs and 'listtitle' in urllib.unquote_plus(regexs):
-        listlink,listtitle,listthumbnail,ret,m,regexs =getRegexParsed(regexs, url)
+    if regexs and 'listrepeat' in urllib.unquote_plus(regexs):
+        listrepeat,ret,m,regexs =getRegexParsed(regexs, url)
 #        print listlink,listtitle,listthumbnail,ret
         d=''
 #        print 'm is' , m
-#        print 'regexs',regexs
+        print 'regexs',regexs
         regexname=m['name']
-        regexs.pop(regexname)
-#        print 'final regexs',regexs
+        existing_list=regexs.pop(regexname)
+        print 'final regexs',regexs,regexname
         url=''
         import copy
+        ln=''
         for obj in ret:
             newcopy=copy.deepcopy(regexs)
-            listtitleT,listlinkT,listthumbnailT=listtitle,listlink,listthumbnail
+            print 'newcopy',newcopy, len(newcopy)
+            listrepeatT=listrepeat
             i=0
             for i in range(len(obj)):
-#                print 'i is ',i, len(obj)
-                for the_keyO, the_valueO in newcopy.iteritems():
-                    if the_valueO is not None:
-                        for the_key, the_value in the_valueO.iteritems():
-                            if the_value is not None:
-#                                print  'key and val',the_key, the_value
-#                                print 'aa'
-#                                print '[' + regexname+'.param'+str(i+1) + ']'
-#                                print repr(obj[i])
-                                the_valueO[the_key]=the_value.replace('[' + regexname+'.param'+str(i+1) + ']', obj[i].decode('utf-8') )
-                listtitleT,listlinkT,listthumbnailT=listtitleT.replace('[' + regexname+'.param'+str(i+1) + ']',obj[i].decode('utf-8')) , listlinkT.replace('[' + regexname+'.param'+str(i+1) + ']',obj[i].decode('utf-8')) , listthumbnailT.replace('[' + regexname+'.param'+str(i+1) + ']',obj[i].decode('utf-8'))
-            newcopy = urllib.quote(repr(newcopy))
-#            print newcopy
-            addLink(listlinkT,listtitleT.encode('utf-8', 'ignore'),listthumbnailT,'','','','',True,None,newcopy, len(ret))
-
-            ln='<item><title>%s</title><link>%s</link><thumbnail>%s</thumbnail>'%(listtitleT,listlinkT,listthumbnailT)   
-#            print repr(ln)
+                print 'i is ',i, len(obj), len(newcopy)
+                if len(newcopy)>0:
+                    for the_keyO, the_valueO in newcopy.iteritems():
+                        if the_valueO is not None:
+                            for the_key, the_value in the_valueO.iteritems():
+                                if the_value is not None:                                
+    #                                print  'key and val',the_key, the_value
+    #                                print 'aa'
+    #                                print '[' + regexname+'.param'+str(i+1) + ']'
+    #                                print repr(obj[i])
+                                    if type(the_value) is dict:
+                                        for the_keyl, the_valuel in the_value.iteritems():
+                                            if the_valuel is not None:
+                                                the_value[the_keyl]=the_valuel.replace('[' + regexname+'.param'+str(i+1) + ']', obj[i].decode('utf-8') )                                            
+                                    else:
+                                        the_valueO[the_key]=the_value.replace('[' + regexname+'.param'+str(i+1) + ']', obj[i].decode('utf-8') )
+                listrepeatT=listrepeatT.replace('[' + regexname+'.param'+str(i+1) + ']',obj[i].decode('utf-8')) 
+            #newcopy = urllib.quote(repr(newcopy))
+            print 'new regex list', repr(newcopy), repr(listrepeatT)
+#            addLink(listlinkT,listtitleT.encode('utf-8', 'ignore'),listthumbnailT,'','','','',True,None,newcopy, len(ret))
+            regex_xml=''
+            if len(newcopy)>0:
+                regex_xml=d2x(newcopy,'lsproroot')
+                regex_xml=regex_xml.split('<lsproroot>')[1].split('</lsproroot')[0]
+          
+            ln+='\n<item>%s\n%s</item>'%(listrepeatT,regex_xml)   
+            print repr(ln)
 #            print newcopy
                 
-            ln+='</item>'
+#            ln+='</item>'
         #create xml here
-#        getData(url,fanart,data)
+        getData('','',ln)
         xbmcplugin.endOfDirectory(int(sys.argv[1]))
     else:
         url,setresolved = getRegexParsed(regexs, url)
