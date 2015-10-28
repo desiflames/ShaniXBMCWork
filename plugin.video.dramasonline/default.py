@@ -89,7 +89,7 @@ def get_params():
 def Addtypes():
 	baseLink = 'http://www.dramasonline.com/%s-latest-dramas-episodes-online/'
 	#2 is series=3 are links
-	addDir('All Recent Episodes' ,'http://www.dramasonline.com/' ,3,'http://i.imgur.com/qSzxay9.png') #links 
+	addDir('All Recent Episodes' ,'http://dramaonline.com/wp-admin/admin-ajax.php$page$=1' ,3,'http://i.imgur.com/qSzxay9.png') #links 
 	addDir('HumTv Shows', baseLink % 'hum-tv' ,2,'http://i.imgur.com/SPbcdsI.png')
 	addDir('GeoTv Shows', baseLink % 'geo-tv' ,2,'http://i.imgur.com/YELzFHv.png')
 	addDir('PTV Home Shows', baseLink % 'ptv-home' ,2,'http://i.imgur.com/vJPo6xO.png')
@@ -183,33 +183,51 @@ def TopRatedDramas(Fromurl):
 	return
 
 def AddEnteries(Fromurl):
-	print 'getting enteries %s' % Fromurl
+    print 'getting enteries %s' % Fromurl
 
-	link = getHtml(Fromurl)
+    pagenum=''
+    if 'admin-ajax.php' in Fromurl:
+        Fromurl, pagenum=Fromurl.split('$page$=')
+        post = {'action':'mts_home_tabs_content','tab':'#latest-tab-content','page':pagenum}
+        post = urllib.urlencode(post)
+        link = getHtml(Fromurl,post=post)
+    else:
+        link = getHtml(Fromurl)
 
-#	print link
-#	print "addshows"
-#	match=re.compile('<param name="URL" value="(.+?)">').findall(link)
-#	match=re.compile('<a href="(.+?)"').findall(link)
-#	match=re.compile('onclick="playChannel\(\'(.*?)\'\);">(.*?)</a>').findall(link)
-#	match =re.findall('onclick="playChannel\(\'(.*?)\'\);">(.*?)</a>', link, re.DOTALL|re.IGNORECASE)
-#	match =re.findall('onclick="playChannel\(\'(.*?)\'\);".?>(.*?)</a>', link, re.DOTALL|re.IGNORECASE)
-#	match =re.findall('<div class=\"post-title\"><a href=\"(.*?)\".*<b>(.*)<\/b><\/a>', link, re.IGNORECASE)
-#	match =re.findall('<img src="(.*?)" alt=".*".+<\/a>\n*.+<div class="post-title"><a href="(.*?)".*<b>(.*)<\/b>', link, re.UNICODE)
-#	print Fromurl
-#	match =re.findall('<div class="videopart">\s*<div class="paneleft">\s*<a class="pthumb" href="(.*?)" title="(.*?)".*?img.*?src="(.*?)" class="attachment-index-post-thumbnail wp-post-image"', link, re.M|re.DOTALL)
-	match =re.findall('<a href="(.*?)".*?title="(.*?)".*?\s.*img.*?src="(.*?)"', link)
-#	print Fromurl
+    #	print link
+    #	print "addshows"
+    #	match=re.compile('<param name="URL" value="(.+?)">').findall(link)
+    #	match=re.compile('<a href="(.+?)"').findall(link)
+    #	match=re.compile('onclick="playChannel\(\'(.*?)\'\);">(.*?)</a>').findall(link)
+    #	match =re.findall('onclick="playChannel\(\'(.*?)\'\);">(.*?)</a>', link, re.DOTALL|re.IGNORECASE)
+    #	match =re.findall('onclick="playChannel\(\'(.*?)\'\);".?>(.*?)</a>', link, re.DOTALL|re.IGNORECASE)
+    #	match =re.findall('<div class=\"post-title\"><a href=\"(.*?)\".*<b>(.*)<\/b><\/a>', link, re.IGNORECASE)
+    #	match =re.findall('<img src="(.*?)" alt=".*".+<\/a>\n*.+<div class="post-title"><a href="(.*?)".*<b>(.*)<\/b>', link, re.UNICODE)
+    #	print Fromurl
+    #	match =re.findall('<div class="videopart">\s*<div class="paneleft">\s*<a class="pthumb" href="(.*?)" title="(.*?)".*?img.*?src="(.*?)" class="attachment-index-post-thumbnail wp-post-image"', link, re.M|re.DOTALL)
+    first='<a href="(.*?)".*?title="(.*?)".*?\s.*img.*?src="(.*?)"'
+    match =re.findall(first, link)
+    first='<a href="(.*?)".*?title="(.*?)".*?\s*.*?div.*?\s*<img.*?src="(.*?)"'
+    if len (match)==0:     
+        match =re.findall(first, link)
+        
+ 
+    #print match
 
-	#print match
+    for cname in match:
+        addDir(cname[1] ,cname[0] ,4,cname[2],isItFolder=False)
 
-	for cname in match:
-		addDir(cname[1] ,cname[0] ,4,cname[2],isItFolder=False)
-		
-	match =re.findall('"nextLink":"(http.*?)"', link)
-	if len(match)==1:
-		addDir('Next Page' ,match[0].replace('\\/','/') ,3, '')
-	#print 'match', match
+    nextpageurl=''
+    if 'admin-ajax.php' in Fromurl:
+        nextpageurl='http://dramaonline.com/wp-admin/admin-ajax.php$page$='+str(int(pagenum)+1)
+    else:
+        match =re.findall('"nextLink":"(http.*?)"', link)
+    
+        if len(match)==1:
+            nextpageurl=match[0].replace('\\/','/') 
+    if len(nextpageurl)>0:
+        addDir('Next Page' ,nextpageurl,3, '')
+    #print 'match', match
 
 def AddChannels(liveURL):
 
@@ -376,10 +394,10 @@ def getTuneTvUrl(html, short):
 		traceback.print_exc(file=sys.stdout)
 		return None
 
-def getHtml(url, ref=None):
+def getHtml(url, ref=None, post=None):
 	req = urllib2.Request(url)
 	req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
-	response = urllib2.urlopen(req)
+	response = urllib2.urlopen(req,post)
 	link=response.read()
 	response.close()
 	return link
