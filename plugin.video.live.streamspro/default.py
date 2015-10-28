@@ -2381,7 +2381,7 @@ def d2x(d, root="root",nested=0):
         if vtype is dict: 
             xml = ml('\n' + d2x(vl,None,nested+1),xml)         
         if vtype is not list and vtype is not dict: 
-            vl=escape(vl)
+            if not vl is None: vl=escape(vl)
             xml = ml(vl,xml)
 
     xml += cl(root) if root else ""
