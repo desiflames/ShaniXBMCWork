@@ -74,7 +74,7 @@ def PlayStream(sourceEtree, urlSoup, name, url):
             except: pass
             liveLink=replaceGLArabVariables(liveLink,pDialog,gcid, title)
             print 'title',title,liveLink
-            if 'proxy' not in title.lower() and 'hd' in title.lower() and ':7777/' in liveLink:
+            if 1==2 and  'proxy' not in title.lower() and 'hd' in title.lower() and ':7777/' in liveLink:
                     print 'inside here'
                     start = time.time() 
                     from F4mProxy import f4mProxyHelper
@@ -803,21 +803,37 @@ def replaceGLArabVariables(link, d,gcid, title):
                 print 'gcurl',gcurl
                 gcurl=gcurl.replace(' ','%20')
             else:
-                gcurl='https://apps.glwiz.com:448/uniwebappandroidads/(S(0mdxhq55vlua3zy1wfg4oooz))/ajax.ashx?stream=tv&ppoint=0&chid=0&chname=&clustername=zixi-mobile&'
+#                gcurl='https://apps.glwiz.com:448/uniwebappandroidads/(S(0mdxhq55vlua3zy1wfg4oooz))/ajax.ashx?stream=tv&ppoint=0&chid=0&chname=&clustername=zixi-mobile&'
+                gcurl='https://apps.glwiz.com:448/UniWebApp-iOS-Ads/ajax.ashx?stream=tv&ppoint=%s.m3u8&clustername=zixi-mobile&&ref=2648384280'%videoPath
                 
             sessionpage=getUrl(gcurl,cookieJar)
             
+            import uuid
+            GlUser=str(uuid.uuid1()).upper()
             print sessionpage
             session=sessionpage.split(':')[2]
             sessionserver=sessionpage.split(':')[0].replace(':2077','')
+            if 'user=' not in link:
+                link+='&user=$GL-User$'
          
         elif glLocalProxy or glproxyCommon:
-            gcUrl=base64.b64decode('aHR0cHM6Ly9hcHBzLmdsd2l6LmNvbTo0NDgvVW5pV2ViQXBwQW5kcm9pZC9hamF4LmFzaHg/c3RyZWFtPXR2JnBwb2ludD1NQkNNYXNlckRyYW1hX0hpZ2gmY2hpZD0zMDM2MDAmY2huYW1lPU1CQyUyME1hc2VyJTIwRHJhbWEmY2x1c3Rlcm5hbWU9eml4aSY=')
-            #print gcUrl,'gcUrl'
-            sessionpage=getUrl(gcUrl)            
+            gcurl='https://apps.glwiz.com:448/UniWebApp-iOS-Ads/ajax.ashx?stream=tv&ppoint=%s.m3u8&clustername=zixi-mobile&&ref=2648384280'%videoPath                
+            sessionpage=getUrl(gcurl,cookieJar)
+
+            import uuid
+            GlUser=str(uuid.uuid1()).upper()
             print sessionpage
             session=sessionpage.split(':')[2]
             sessionserver=sessionpage.split(':')[0].replace(':2077','')
+            if 'user=' not in link:
+                link+='&user=$GL-User$'
+        
+            #gcUrl=base64.b64decode('https://apps.glwiz.com:448/UniWebAppAndroid/ajax.ashx?stream=tv&ppoint=MBCMaserDrama_High&chid=303600&chname=MBC%20Maser%20Drama&clustername=zixi&')
+            ##print gcUrl,'gcUrl'
+            #sessionpage=getUrl(gcUrl)            
+            #print sessionpage
+            #session=sessionpage.split(':')[2]
+            #sessionserver=sessionpage.split(':')[0].replace(':2077','')
         else:
             hell_pat='hello-data", "(.*?)"'
             header=[('Referer','http://www.glarab.com/homepage.aspx')]
@@ -826,13 +842,19 @@ def replaceGLArabVariables(link, d,gcid, title):
             hello_data=re.compile(hell_pat).findall(hellHtml)[0] 
             header=[('X-hello-data',hello_data),('Referer','http://www.glarab.com/player.aspx')]
             
-            sessionpage=getUrl('http://www.glarab.com/ajax.aspx?stream=live&type=reg&ppoint=%s'%videoPath,cookieJar,headers=header)
+            sessionpage=getUrl('https://apps.glwiz.com:448/UniWebApp-iOS-Ads/ajax.ashx?stream=tv&ppoint=%s.m3u8&clustername=zixi-mobile&&ref=2648384280'%videoPath,cookieJar,headers=header)
             print sessionpage
-            session=sessionpage.split('|')[1]
-            sessionserver=sessionpage.split('|')[2].replace(':2077','')
-            GlUser=sessionpage.split('|')[0]
+            #session=sessionpage.split('|')[1]
+            #sessionserver=sessionpage.split('|')[2].replace(':2077','')
+            #GlUser=sessionpage.split('|')[0]
+            session=sessionpage.split(':')[2]
+            sessionserver=sessionpage.split(':')[0].replace(':2077','')
+            if 'user=' not in link:
+                link+='&user=$GL-User$'
+            import uuid
+            GlUser=str(uuid.uuid1()).upper()
  
-            
+        
         serverPatern=''
         serverAddress=''
         type='low'
@@ -849,6 +871,8 @@ def replaceGLArabVariables(link, d,gcid, title):
             print 'i am here',GLArabServerHD
             serverPatern='GLArabServerHD.*values="(.*?)"'
             link=link.replace('$GL-IPHD$',GLArabServerHD)
+            #link=link.replace('_HD','_Med')
+            
             serverAddress=GLArabServerHD
             type='hd'
 
