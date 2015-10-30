@@ -2143,16 +2143,17 @@ def addDir(name,url,mode,iconimage,fanart,description,genre,date,credits,showcon
         liz.setProperty("Fanart_Image", fanart)
         if showcontext:
             contextMenu = []
+            parentalblock =addon.getSetting('parentalblocked')
+            parentalblock= parentalblock=="true"
+            parentalblockedpin =addon.getSetting('parentalblockedpin')
+            print 'parentalblockedpin',parentalblockedpin
+            if len(parentalblockedpin)>0:
+                if parentalblock:
+                    contextMenu.append(('Disable Parental Block','XBMC.RunPlugin(%s?mode=55&name=%s)' %(sys.argv[0], urllib.quote_plus(name))))
+                else:
+                    contextMenu.append(('Enable Parental Block','XBMC.RunPlugin(%s?mode=56&name=%s)' %(sys.argv[0], urllib.quote_plus(name))))
+                    
             if showcontext == 'source':
-                parentalblock =addon.getSetting('parentalblocked')
-                parentalblock= parentalblock=="true"
-                parentalblockedpin =addon.getSetting('parentalblockedpin')
-                print 'parentalblockedpin',parentalblockedpin
-                if len(parentalblockedpin)>0:
-                    if parentalblock:
-                        contextMenu.append(('Disable Parental Block','XBMC.RunPlugin(%s?mode=55&name=%s)' %(sys.argv[0], urllib.quote_plus(name))))
-                    else:
-                        contextMenu.append(('Enable Parental Block','XBMC.RunPlugin(%s?mode=56&name=%s)' %(sys.argv[0], urllib.quote_plus(name))))
             
                 if name in str(SOURCES):
                     contextMenu.append(('Remove from Sources','XBMC.RunPlugin(%s?mode=8&name=%s)' %(sys.argv[0], urllib.quote_plus(name))))
@@ -2261,6 +2262,16 @@ def pluginquerybyJSON(url,give_me_result=None,playlist=False):
 def addLink(url,name,iconimage,fanart,description,genre,date,showcontext,playlist,regexs,total,setCookie="",allinfo={}):
         #print 'url,name',url,name
         contextMenu =[]
+        parentalblock =addon.getSetting('parentalblocked')
+        parentalblock= parentalblock=="true"
+        parentalblockedpin =addon.getSetting('parentalblockedpin')
+        print 'parentalblockedpin',parentalblockedpin
+        if len(parentalblockedpin)>0:
+            if parentalblock:
+                contextMenu.append(('Disable Parental Block','XBMC.RunPlugin(%s?mode=55&name=%s)' %(sys.argv[0], urllib.quote_plus(name))))
+            else:
+                contextMenu.append(('Enable Parental Block','XBMC.RunPlugin(%s?mode=56&name=%s)' %(sys.argv[0], urllib.quote_plus(name))))
+                    
         try:
             name = name.encode('utf-8')
         except: pass
@@ -2338,7 +2349,7 @@ def addLink(url,name,iconimage,fanart,description,genre,date,showcontext,playlis
         else:
             addon_log( 'NOT setting isplayable'+url)
         if showcontext:
-            contextMenu = []
+            #contextMenu = []
             if showcontext == 'fav':
                 contextMenu.append(
                     ('Remove from LiveStreamsPro Favorites','XBMC.RunPlugin(%s?mode=6&name=%s)'
