@@ -493,9 +493,20 @@ def getItems(items,fanart):
         add_playlist = addon.getSetting('add_playlist')
         ask_playlist_items =addon.getSetting('ask_playlist_items')
         use_thumb = addon.getSetting('use_thumb')
+        parentalblock =addon.getSetting('parentalblocked')
+        parentalblock= parentalblock=="true"
         for item in items:
             isXMLSource=False
             isJsonrpc = False
+            
+            applyblock='false'
+            try:
+                applyblock = item('parentalblock')[0].string
+            except:
+                addon_log('parentalblock Error')
+                name = ''
+            if applyblock=='true' and parentalblock: continue
+                
             try:
                 name = item('title')[0].string
                 if name is None:
@@ -1870,6 +1881,30 @@ def askCaptchaNew(imageregex,html_page,cookieJar,m):
     solution = solver.get()
     return solution
 
+#########################################################
+# Function  : GUIEditExportName                         #
+#########################################################
+# Parameter :                                           #
+#                                                       #
+# name        sugested name for export                  #
+#                                                       # 
+# Returns   :                                           #
+#                                                       #
+# name        name of export excluding any extension    #
+#                                                       #
+#########################################################
+def TakeInput(name, headname):
+
+
+    kb = xbmc.Keyboard('default', 'heading', True)
+    kb.setDefault(name)
+    kb.setHeading(headname)
+    kb.setHiddenInput(False)
+    return kb.getText()
+
+   
+#########################################################
+
 class InputWindow(xbmcgui.WindowDialog):
     def __init__(self, *args, **kwargs):
         self.cptloc = kwargs.get('captcha')
@@ -2109,8 +2144,20 @@ def addDir(name,url,mode,iconimage,fanart,description,genre,date,credits,showcon
         if showcontext:
             contextMenu = []
             if showcontext == 'source':
+                parentalblock =addon.getSetting('parentalblocked')
+                parentalblock= parentalblock=="true"
+                parentalblockedpin =addon.getSetting('parentalblockedpin')
+                print 'parentalblockedpin',parentalblockedpin
+                if len(parentalblockedpin)>0:
+                    if parentalblock:
+                        contextMenu.append(('Disable Parental Block','XBMC.RunPlugin(%s?mode=55&name=%s)' %(sys.argv[0], urllib.quote_plus(name))))
+                    else:
+                        contextMenu.append(('Enable Parental Block','XBMC.RunPlugin(%s?mode=56&name=%s)' %(sys.argv[0], urllib.quote_plus(name))))
+            
                 if name in str(SOURCES):
                     contextMenu.append(('Remove from Sources','XBMC.RunPlugin(%s?mode=8&name=%s)' %(sys.argv[0], urllib.quote_plus(name))))
+                    
+                    
             elif showcontext == 'download':
                 contextMenu.append(('Download','XBMC.RunPlugin(%s?url=%s&mode=9&name=%s)'
                                     %(sys.argv[0], urllib.quote_plus(url), urllib.quote_plus(name))))
@@ -2652,6 +2699,24 @@ elif mode==24:
 elif mode==25:
     addon_log("Searchin Other plugins")
     _search(url,name)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+elif mode==55:
+    addon_log("enabled lock")
+    parentalblockedpin =addon.getSetting('parentalblockedpin')
+    keyboard = xbmc.Keyboard('','Enter Pin')
+    keyboard.doModal()
+    if not (keyboard.isConfirmed() == False):
+        newStr = keyboard.getText()
+        if newStr==parentalblockedpin:
+            addon.setSetting('parentalblocked', "false")
+            xbmc.executebuiltin("XBMC.Notification(LiveStreamsPro,Parental Block Disabled,5000,"+icon+")")
+        else:
+            xbmc.executebuiltin("XBMC.Notification(LiveStreamsPro,Wrong Pin??,5000,"+icon+")")
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+elif mode==56:
+    addon_log("disable lock")
+    addon.setSetting('parentalblocked', "true")
+    xbmc.executebuiltin("XBMC.Notification(LiveStreamsPro,Parental block enabled,5000,"+icon+")")
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 elif mode==53:
