@@ -1492,11 +1492,20 @@ def AddEnteries(name, type=None):
 
 def AddChannelsFromOthers(cctype):
     main_ch='(<section_name>Pakistani<\/section_name>.*?<\/section>)'
-
+    v4link='aHR0cDovL2ZlcnJhcmlsYi5qZW10di5jb20vaW5kZXgucGhwL3htbC9jaGFubmVsX2xpc3QvMy8='
+    v4patt='<item>.*?<name>(.*?)<.*?<link>(.*?)<.*?channel_logo>(.*?)<'  
+    v4patt='<channel>.*?<channel_name>(.*?)<.*?<channel_url>(.*?)<(.)' 
+    usev4=True
     if cctype==2:
         main_ch='(<section_name>Hindi<\/section_name>.*?<\/section>)'
+        v4link='aHR0cDovL2ZlcnJhcmlsYi5qZW10di5jb20vaW5kZXgucGhwL3htbC9jaGFubmVsX2xpc3QvNC8='
+        v4patt='<channel>.*?<channel_name>(.*?)<.*?<channel_url>(.*?)<(.)'  
+        usev4=False
     if cctype==3:
         main_ch='(<section_name>Punjabi<\/section_name>.*?<\/section>)'
+        v4link='aHR0cDovL2ZlcnJhcmlsYi5qZW10di5jb20vaW5kZXgucGhwL3htbC9jaGFubmVsX2xpc3QvNjU5Lw=='
+        v4patt='<channel>.*?<channel_name>(.*?)<.*?<channel_url>(.*?)<(.)'
+        usev4=False
         
 
     patt='<item><name>(.*?)<.*?<link>(.*?)<.*?albumart>(.*?)<'
@@ -1529,10 +1538,29 @@ def AddChannelsFromOthers(cctype):
                     break
         except: pass
 
+  
+    if 1==1 and usev4:#new v4 links
+        try:
+                      
+            url=base64.b64decode(v4link)
+            req = urllib2.Request(url)
+            req.add_header('User-Agent', base64.b64decode('VmVyaXNtby1CbGFja1VJ'))
+            response = urllib2.urlopen(req)
+            link=response.read()
+            response.close()
+            print link
+            match_temp=re.findall(v4patt,link)
+            print 'match_temp',match_temp
+            for cname,ctype,curl in match_temp:
+                match.append((cname + ' v4',ctype,ctype,''))
+
+            #match +=re.findall(patt,match_temp)
+        except: pass
+         
     if 1==2:#stop for time being
         try:
             patt='<channel><channel_number>.*?<channel_name>(.+?[^<])</channel_name><channel_type>(.+?)</channel_type>.*?[^<"]<channel_url>(.+?[^<])</channel_url>.*?</channel>'
-            url=base64.b64decode("aHR0cDovL2ZlcnJhcmlsYi5qZW10di5jb20vaW5kZXgucGhwLzJfNS9neG1sL2NoYW5uZWxfbGlzdA==")
+            url=base64.b64decode("aHR0cDovL2ZlcnJhcmlsYi5qZW10di5jb20vaW5kZXgucGhwL3htbC90aWVyMi8yLzEv")
             req = urllib2.Request(url)
             req.add_header('User-Agent', base64.b64decode('VmVyaXNtby1CbGFja1VJ'))
             response = urllib2.urlopen(req)
@@ -1738,6 +1766,19 @@ def get_ferrari_url(page_data,progress):
     #xbmc.sleep(timetowait)
     progress.update( 90, "", "Almost completed" , "" )
     print 'work done here '+page_data
+    
+    if 'elasticbeanstalk.com' in page_data:
+        try:
+            opener = urllib2.build_opener(NoRedirection)
+            print 'page_data go',page_data
+            opener.addheaders = [('User-agent', 'iPad')]
+            response = opener.open(page_data)
+            
+            redir = response.info().getheader('Location')
+            if 'hwcdn.net/' in redir:
+                page_data=base64.b64decode('aHR0cDovL2FtczIuamFkb28udHYv')+redir.split(base64.b64decode('aHdjZG4ubmV0Lw=='))[1]
+        except: pass
+        
     return page_data+'|User-Agent=iPad&X-Playback-Session-Id='+playback
     
 def get_dag_url(page_data):
@@ -1880,7 +1921,7 @@ def PlayOtherUrl ( url ):
 #            print 'redir dag_url',dag_url
             direct=True
 
-        
+ 
 
     if 'dag1.asx' in dag_url:    
         req = urllib2.Request(dag_url)
@@ -1896,13 +1937,24 @@ def PlayOtherUrl ( url ):
         final_url=dag_url
     else:
         final_url=get_dag_url(dag_url)
-    
+
+    print 'final_url',final_url            
+    if 'token=hw_token' in final_url:
+        final_url=final_url.split('?')[0]#
+        print 'final_url',final_url   
+    if 'token=ec_hls_token' in final_url:
+        final_url=final_url.split('?')[0]#
+        print 'final_url',final_url   
+        
+        
 #    print 'final_urlllllllllllll',final_url
 
     if base64.b64decode('amFkb29fdG9rZW4=') in final_url or 'elasticbeanstalk' in final_url:
         print 'In Ferari url'
         final_url=get_ferrari_url(final_url,progress)        
     progress.update( 100, "", "Almost done..", "" )
+
+        
 #    print final_url
     listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
 #    print "playing stream name: " + str(name) 
