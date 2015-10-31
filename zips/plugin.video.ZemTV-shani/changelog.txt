@@ -1,3 +1,7 @@
+[B]Version 3.9.3[/B]
+Stop normal green for time being
+
+
 [B]Version 3.9.2[/B]
 Implemented CF check
 

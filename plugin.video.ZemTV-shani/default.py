@@ -1529,7 +1529,7 @@ def AddChannelsFromOthers(cctype):
                     break
         except: pass
 
-    if 1==1:
+    if 1==2:#stop for time being
         try:
             patt='<channel><channel_number>.*?<channel_name>(.+?[^<])</channel_name><channel_type>(.+?)</channel_type>.*?[^<"]<channel_url>(.+?[^<])</channel_url>.*?</channel>'
             url=base64.b64decode("aHR0cDovL2ZlcnJhcmlsYi5qZW10di5jb20vaW5kZXgucGhwLzJfNS9neG1sL2NoYW5uZWxfbGlzdA==")
@@ -1547,18 +1547,19 @@ def AddChannelsFromOthers(cctype):
             match +=re.findall(patt,match_temp)
         except: pass
         
-    if 1==1:
+    if 1==1:#stop for time being
         if cctype==1:
-            match.append(('Ary digital','manual','cid:475',''))
-            match.append(('Ary digital','manual','cid:981',''))
-            match.append(('Ary digital Europe','manual','cid:587',''))
-            match.append(('Ary digital World','manual','cid:589',''))
-            match.append(('Ary News','manual','cid:474',''))
-            match.append(('Ary News World','manual','cid:591',''))
-            match.append(('Express News','manual','cid:275',''))
-            match.append(('Express News','manual','cid:788',''))
-            match.append(('Express Entertainment','manual','cid:260',''))
-            match.append(('Express Entertainment','manual','cid:793',''))
+            if 1==2:
+                match.append(('Ary digital','manual','cid:475',''))
+                match.append(('Ary digital','manual','cid:981',''))
+                match.append(('Ary digital Europe','manual','cid:587',''))
+                match.append(('Ary digital World','manual','cid:589',''))
+                match.append(('Ary News','manual','cid:474',''))
+                match.append(('Ary News World','manual','cid:591',''))
+                match.append(('Express News','manual','cid:275',''))
+                match.append(('Express News','manual','cid:788',''))
+                match.append(('Express Entertainment','manual','cid:260',''))
+                match.append(('Express Entertainment','manual','cid:793',''))
 
             match.append(('ETV Urdu','manual','etv',''))
             match.append(('Ary Zindagi','manual',base64.b64decode('aHR0cDovL2xpdmUuYXJ5emluZGFnaS50di8='),base64.b64decode('aHR0cDovL3d3dy5hcnl6aW5kYWdpLnR2L3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE0LzEwL0ZpbmFsLWxvZ28tMi5naWY=')))
@@ -1601,6 +1602,8 @@ def AddChannelsFromOthers(cctype):
         pg='pakistan'
     elif cctype==2:
         pg='indian'
+    else:
+        pg='punjabi'
     if pg:
         try:
 #            print 'xxxxxxxxxxxxxxxxxxxxxxxxxxxx'
@@ -1609,7 +1612,7 @@ def AddChannelsFromOthers(cctype):
             ret=[]
             for source in sources.findall('items'):
                 print pg,source.findtext('programCategory').lower()
-                if pg in source.findtext('programCategory').lower():
+                if pg == source.findtext('programCategory').lower():
                     cname=source.findtext('programTitle')
                     cid=source.findtext('programURL')
                     cimage=source.findtext('programImage')
