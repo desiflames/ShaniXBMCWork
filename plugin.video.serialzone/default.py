@@ -387,7 +387,19 @@ def PlayShowLink ( url ):
         match =re.findall('yp\(\'(.*?)\'', link)
     #	print "LINK: ",link
     #        print "MATCH: ",match
-
+    if len(match)==0:
+    #		print 'not found trying again'
+        match =re.findall('\(\'(.*?)\'', link)
+        if match[0].startswith('http'):
+            req = urllib2.Request(match[0])
+            req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
+            response = urllib2.urlopen(req)
+            link=response.read()
+            response.close()
+            match =re.findall("\'(http.*?master.m3u8?.*?)\'", link)
+            xbmc.executebuiltin("xbmc.PlayMedia("+match[0]+")")
+            return
+            
     time1=2000
     line1 = "Playing Youtube Link"
     xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%(__addonname__,line1, time1, __icon__))

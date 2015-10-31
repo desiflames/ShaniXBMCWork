@@ -10,3 +10,5 @@ Update to default.py script to fix logic.
 
 [B]Version 1.3[/B]
 Enable proxy play
+[B]Version 1.4[/B]
+External non youtube links
